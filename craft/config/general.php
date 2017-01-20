@@ -14,9 +14,17 @@ return array(
          'enableCsrfProtection' => true,
          'omitScriptNameInUrls' => true,
          'cpTrigger' => 'admin',
+         'environmentVariables' => array(
+           'basePath' => '',
+           'baseUrl'  => 'PRODUCTION URL',
+        )
 	),
-	'treno.web' => array(
+	'test.web' => array(
 	    'devMode' => true,
-      'siteUrl' => 'LOCAL URL',
+      'siteUrl' => 'DEV URL',
+      'environmentVariables' => array(
+        'basePath' => '',
+        'baseUrl'  => 'DEV URL',
+      )
 	)
 );
