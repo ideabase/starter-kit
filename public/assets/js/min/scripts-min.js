@@ -1,1 +1,1 @@
-var hello;
+// Minified JavaScript Goes Here //

@@ -1,1 +1,1 @@
-var hello;
+// JavaScript Goes Here //
