@@ -8,13 +8,15 @@ IdeaBase Starter Kit v2 - Includes Grunt + Pattern Lab + Craft CMS
 * Create a New Repository under IdeaBase
 * Install Tower https://www.git-tower.com/mac/ or GitHub Desktop (or use command line if you want)
 * Log in with GitHub credentials and clone the new repository
-* Copy the files from the IdeaBase Starter Kit 2.0 into the repository
+* Download the IdeaBase Starter Kit 2.0 zip file and copy the files into the repository
+* Commit and push changes to repository using "Push - Tower" or "Publish - Github Desktop"
 
 ### MAMP (PHP, MySQL)
 
 * Install MAMP Pro http://mamp.info
 * Under ports - click the button to Set server ports to 80, 81, etc...
 * Set up a new host directory (aka something.web) and point to the "public" or "html" folder instead of the root
+ * Click the plus button underneath the box where "localhost" is listed
 * Set up a local database, if using a CMS
 * Set the default password for MySQL to "root"
 * Start Servers
@@ -38,8 +40,8 @@ IdeaBase Starter Kit v2 - Includes Grunt + Pattern Lab + Craft CMS
 * Open the command line interface
 * Type "sudo gem install sass" and enter
 * Type "sudo npm install -g grunt-cli" and enter
-* Type "sudo npm install" and enter
 * Navigate to the directory where your project is located (the public or html folder)
+* Type "sudo npm install" and enter
 * Type "grunt" and hit enter.
 * Save a file to test grunt build process
 
