@@ -1,5 +1,6 @@
 <?php
 
+/** Note: Rename this file to db.php and set it to IGNORE before commiting!  */
 /**
  * Database Configuration
  *

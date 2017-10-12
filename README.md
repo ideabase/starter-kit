@@ -23,9 +23,9 @@ IdeaBase Starter Kit v2 - Includes Grunt + Pattern Lab + Craft CMS
 
 ### CMS Instructions
 
-* Edit the craft/config/db.php file with the LOCAL database name (assuming the password and user name are root)
-* Don't commit the production user name and password.  Change this on the server instead once files are committed.
-* You can "set assume unchanged" the db.php file once it's been edited with the local info so there's no chance of it being overwritten to production.
+* Rename the craft/config/db-backup.php to be db.php
+* Edit the craft/config/db-backup.php file with the LOCAL database name (assuming the password and user name are root)
+* You can "Ignore" the db.php file once it's been edited with the local info so there's no chance of it being overwritten to production.
 * Important - change the public/htaccess file to be .htaccess.  
 * In craft/config/general.php - change the LOCAL url to your actual local URL.
 * Go to your local URL/admin to begin CMS setup.
