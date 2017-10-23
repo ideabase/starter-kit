@@ -1,3 +1,5 @@
 .sass-cache/
 *.css.map
 .DS_Store
+/craft/config/general.php
+/craft/config/db.php

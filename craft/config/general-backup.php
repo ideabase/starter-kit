@@ -1,5 +1,7 @@
 <?php
 
+/** Note: Rename this file to general.php and set it to IGNORE before commiting!  */
+
 /**
  * General Configuration
  *
@@ -21,10 +23,10 @@ return array(
 	),
 	'test.web' => array(
 	    'devMode' => true,
-      'siteUrl' => 'DEV URL',
+      'siteUrl' => 'DEV URL GOES HERE',
       'environmentVariables' => array(
         'basePath' => '',
-        'baseUrl'  => 'DEV URL',
+        'baseUrl'  => 'DEV URL GOES HERE',
       )
 	)
 );
