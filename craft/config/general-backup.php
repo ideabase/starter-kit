@@ -23,10 +23,10 @@ return array(
 	),
 	'test.web' => array(
 	    'devMode' => true,
-      'siteUrl' => 'DEV URL GOES HERE',
+      'siteUrl' => 'http://DEV URL GOES HERE',
       'environmentVariables' => array(
         'basePath' => '',
-        'baseUrl'  => 'DEV URL GOES HERE',
+        'baseUrl'  => 'http://DEV URL GOES HERE',
       )
 	)
 );
