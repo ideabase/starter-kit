@@ -75,15 +75,12 @@ class UserPermissionsService extends BaseApplicationComponent
 
 		if (craft()->getEdition() == Craft::Pro)
 		{
-			$permissions[Craft::t('Users')] = array(
+			$userPermissions = array(
 				'editUsers' => array(
 					'label' => Craft::t('Edit users'),
 					'nested' => array(
 						'registerUsers' => array(
 							'label' => Craft::t('Register users')
-						),
-						'assignUserPermissions' => array(
-							'label' => Craft::t('Assign user groups and permissions')
 						),
 						'administrateUsers' => array(
 							'label' => Craft::t('Administrate users'),
@@ -93,12 +90,27 @@ class UserPermissionsService extends BaseApplicationComponent
 								),
 							),
 						),
+						'assignUserPermissions' => array(
+							'label' => Craft::t('Assign user permissions')
+						),
+						'assignUserGroups' => array(
+							'label' => Craft::t('Assign user groups')
+						)
 					),
 				),
 				'deleteUsers' => array(
 					'label' => Craft::t('Delete users')
 				),
 			);
+
+			foreach (craft()->userGroups->getAllGroups() as $userGroup)
+			{
+				$userPermissions['editUsers']['nested']['assignUserGroups']['nested']['assignUserGroup:'.$userGroup->id] = array(
+					'label' => Craft::t('Assign users to “{group}”', array('group' => $userGroup->name))
+				);
+			}
+
+			$permissions[Craft::t('Users')] = $userPermissions;
 		}
 
 		// Locales
@@ -180,6 +192,36 @@ class UserPermissionsService extends BaseApplicationComponent
 	}
 
 	/**
+	 * Returns the permissions that the current user is allowed to assign to another user.
+	 *
+	 * @param UserModel|null $user The recipient of the permissions. If set, their current permissions will be included as well.
+	 *
+	 * @return array
+	 */
+	public function getAssignablePermissions(UserModel $user = null)
+	{
+		// If either user is an admin, all permissions are fair game
+		if (craft()->userSession->isAdmin() || ($user && $user->admin))
+		{
+			return $this->getAllPermissions();
+		}
+
+		$allowedPermissions = array();
+
+		foreach ($this->getAllPermissions() as $category => $permissions)
+		{
+			$filteredPermissions = $this->_filterUnassignablePermissions($permissions, $user);
+
+			if (!empty($filteredPermissions))
+			{
+				$allowedPermissions[$category] = $filteredPermissions;
+			}
+		}
+
+		return $allowedPermissions;
+	}
+
+	/**
 	 * Returns all of a given user group's permissions.
 	 *
 	 * @param int $groupId
@@ -188,7 +230,7 @@ class UserPermissionsService extends BaseApplicationComponent
 	 */
 	public function getPermissionsByGroupId($groupId)
 	{
-		if (!isset($this->_permissionsByUserId[$groupId]))
+		if (!isset($this->_permissionsByGroupId[$groupId]))
 		{
 			$groupPermissions = craft()->db->createCommand()
 				->select('p.name')
@@ -251,6 +293,10 @@ class UserPermissionsService extends BaseApplicationComponent
 		craft()->db->createCommand()
 			->delete('userpermissions_usergroups', array('groupId' => $groupId));
 
+		// Lowercase the permissions
+		$permissions = array_map('strtolower', $permissions);
+
+		// Filter out any orphaned permissions
 		$permissions = $this->_filterOrphanedPermissions($permissions);
 
 		if ($permissions)
@@ -267,6 +313,9 @@ class UserPermissionsService extends BaseApplicationComponent
 			craft()->db->createCommand()
 				->insertAll('userpermissions_usergroups', array('permissionId', 'groupId'), $groupPermissionVals);
 		}
+
+		// Cache the new permissions
+		$this->_permissionsByGroupId[$groupId] = $permissions;
 
 		return true;
 	}
@@ -327,6 +376,9 @@ class UserPermissionsService extends BaseApplicationComponent
 		craft()->db->createCommand()
 			->delete('userpermissions_users', array('userId' => $userId));
 
+		// Lowercase the permissions
+		$permissions = array_map('strtolower', $permissions);
+
 		// Filter out any orphaned permissions
 		$groupPermissions = $this->getGroupPermissionsByUserId($userId);
 		$permissions = $this->_filterOrphanedPermissions($permissions, $groupPermissions);
@@ -345,6 +397,9 @@ class UserPermissionsService extends BaseApplicationComponent
 			craft()->db->createCommand()
 				->insertAll('userpermissions_users', array('permissionId', 'userId'), $userPermissionVals);
 		}
+
+		// Cache the new permissions
+		$this->_permissionsByUserId[$userId] = $permissions;
 
 		return true;
 	}
@@ -509,13 +564,47 @@ class UserPermissionsService extends BaseApplicationComponent
 	}
 
 	/**
+	 * Filters out any permissions that aren't assignable by the current user.
+	 *
+	 * @param array          $permissions The original permissions
+	 * @param UserModel|null $user        The recipient of the permissions. If set, their current permissions will be included as well.
+	 *
+	 * @return array The filtered permissions
+	 */
+	private function _filterUnassignablePermissions($permissions, UserModel $user = null)
+	{
+		$currentUser = craft()->userSession->getUser();
+		if (!$currentUser && !$user)
+		{
+			return array();
+		}
+
+		$assignablePermissions = array();
+
+		foreach ($permissions as $name => $data)
+		{
+			if (($currentUser && $currentUser->can($name)) || ($user && $user->can($name)))
+			{
+				if (isset($data['nested']))
+				{
+					$data['nested'] = $this->_filterUnassignablePermissions($data['nested'], $user);
+				}
+
+				$assignablePermissions[$name] = $data;
+			}
+		}
+
+		return $assignablePermissions;
+	}
+
+	/**
 	 * Filters out any orphaned permissions.
 	 *
 	 * @param array $postedPermissions The posted permissions.
 	 * @param array $groupPermissions  Permissions the user is already assigned to via their group, if we're saving a
 	 *                                 user's permissions.
 	 *
-	 * @return array $filteredPermissions The permissions we'll actually let them save.
+	 * @return array The permissions we'll actually let them save.
 	 */
 	private function _filterOrphanedPermissions($postedPermissions, $groupPermissions = array())
 	{
@@ -548,8 +637,10 @@ class UserPermissionsService extends BaseApplicationComponent
 
 		foreach ($permissionsGroup as $name => $data)
 		{
+		    $name = strtolower($name);
+
 			// Should the user have this permission (either directly or via their group)?
-			if (($inPostedPermissions = in_array($name, $postedPermissions)) || in_array(strtolower($name), $groupPermissions))
+			if (($inPostedPermissions = in_array($name, $postedPermissions)) || in_array($name, $groupPermissions))
 			{
 				// First assign any nested permissions
 				if (!empty($data['nested']))

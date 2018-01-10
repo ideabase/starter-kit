@@ -554,7 +554,7 @@ class CraftTwigExtension extends \Twig_Extension
 			$globals['logoutUrl'] = UrlHelper::getUrl(craft()->config->getLogoutPath());
 			$globals['isInstalled'] = $isInstalled;
 
-			if ($isInstalled)
+			if ($isInstalled && !craft()->isConsole())
 			{
 				$globals['currentUser'] = craft()->userSession->getUser();
 			}
@@ -563,7 +563,7 @@ class CraftTwigExtension extends \Twig_Extension
 			// Technically deprecated, though.
 			$globals['user'] = $globals['currentUser'];
 
-			if (craft()->request->isCpRequest())
+			if (craft()->templates->getTemplateMode() === TemplateMode::CP)
 			{
 				$globals['CraftEdition']  = craft()->getEdition();
 				$globals['CraftPersonal'] = Craft::Personal;
@@ -579,7 +579,7 @@ class CraftTwigExtension extends \Twig_Extension
 			$globals['siteName'] = craft()->getSiteName();
 			$globals['siteUrl'] = craft()->getSiteUrl();
 
-			if (craft()->request->isSiteRequest())
+			if (craft()->templates->getTemplateMode() === TemplateMode::Site)
 			{
 				foreach (craft()->globals->getAllSets() as $globalSet)
 				{

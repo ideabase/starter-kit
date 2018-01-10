@@ -60,24 +60,28 @@ class RebrandController extends BaseController
 				}
 
 				$folderPath = craft()->path->getTempUploadsPath();
+				$fullPath = $folderPath.$fileName;
+
 				IOHelper::ensureFolderExists($folderPath);
 				IOHelper::clearFolder($folderPath, true);
 
-				move_uploaded_file($file->getTempName(), $folderPath.$fileName);
+				move_uploaded_file($file->getTempName(), $fullPath);
 
 				// Test if we will be able to perform image actions on this image
-				if (!craft()->images->checkMemoryForImage($folderPath.$fileName))
+				if (!craft()->images->checkMemoryForImage($fullPath))
 				{
-					IOHelper::deleteFile($folderPath.$fileName);
+					IOHelper::deleteFile($fullPath);
 					$this->returnErrorJson(Craft::t('The uploaded image is too large'));
 				}
 
-				craft()->images->
-					loadImage($folderPath.$fileName)->
-					scaleToFit(500, 500, false)->
-					saveAs($folderPath.$fileName);
+				craft()->images->cleanImage($fullPath);
 
-				list ($width, $height) = ImageHelper::getImageSize($folderPath.$fileName);
+				craft()->images->
+					loadImage($fullPath)->
+					scaleToFit(500, 500, false)->
+					saveAs($fullPath);
+
+				list ($width, $height) = ImageHelper::getImageSize($fullPath);
 
 				// If the file is in the format badscript.php.gif perhaps.
 				if ($width && $height)
@@ -87,7 +91,7 @@ class RebrandController extends BaseController
 							'imageUrl' => UrlHelper::getResourceUrl('tempuploads/'.$fileName),
 							'width' => $width,
 							'height' => $height,
-                            'fileName' => $fileName
+							'fileName' => $fileName
 						)
 					);
 
@@ -97,6 +101,8 @@ class RebrandController extends BaseController
 		}
 		catch (Exception $exception)
 		{
+			// Don't leave the file hanging around in a temp folder in case it was malicious.
+			IOHelper::deleteFile($fullPath);
 			$this->returnErrorJson($exception->getMessage());
 		}
 
@@ -137,9 +143,9 @@ class RebrandController extends BaseController
 				$targetPath = craft()->path->getRebrandPath().$type.'/';
 
 				IOHelper::ensureFolderExists($targetPath);
-                IOHelper::clearFolder($targetPath);
+				IOHelper::clearFolder($targetPath);
 
-                craft()->images
+				craft()->images
 						->loadImage($imagePath)
 						->crop($x1, $x2, $y1, $y2)
 						->scaleToFit(300, 300, false)
@@ -155,6 +161,8 @@ class RebrandController extends BaseController
 		}
 		catch (Exception $exception)
 		{
+			// Don't leave the file hanging around in a temp folder in case it was malicious.
+			IOHelper::deleteFile($imagePath);
 			$this->returnErrorJson($exception->getMessage());
 		}
 

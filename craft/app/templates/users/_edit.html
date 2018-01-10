@@ -12,7 +12,6 @@
 	"Are you sure you want to delete this photo?"
 %}
 
-{% includejsresource "lib/fileupload/jquery.ui.widget.js" %}
 {% includejsresource "lib/fileupload/jquery.fileupload.js" %}
 {% includejsresource "lib/jcrop/jquery.Jcrop.min.js" %}
 {% includejsresource "js/profile.js" %}
@@ -185,21 +184,21 @@
 						{% if CraftEdition == CraftPro %}
 							<h2>{{ "User Groups"|t }}</h2>
 
-							{% set allGroups = craft.userGroups.getAllGroups() %}
-							{% set userGroups = account.getGroups('id') %}
+							{% set assignableGroups = craft.userGroups.getAssignableGroups(account) %}
+							{% set currentGroupIds = account.getGroups('id')|keys %}
 
 							{% set userGroupsInput %}
 								<input type="hidden" name="groups" value="">
 
-								{% if allGroups %}
+								{% if assignableGroups %}
 									<ul>
-										{% for group in allGroups %}
+										{% for group in assignableGroups %}
 											<li>
 												{{ forms.checkbox({
-													label: group.name|t,
+													label: group.name|t|e,
 													name: 'groups[]',
 													value: group.id,
-													checked: (group.id in userGroups|keys)
+													checked: (group.id in currentGroupIds)
 												}) }}
 											</li>
 										{% endfor %}
@@ -276,10 +275,10 @@
 						</div>
 					</div>
 
-					{% if account.status == 'locked' and craft.config.cooldownDuration %}
+					{% if account.status == 'locked' and craft.config.cooldownDuration and account.remainingCooldownTime %}
 						<div class="data">
 							<h5 class="heading">{{ "Cooldown Time Remaining"|t }}</h5>
-							<p class="value">{{ account.remainingCooldownTime.humanDuration }}</p>
+							<p class="value">{{ account.remainingCooldownTime.humanDuration() }}</p>
 						</div>
 					{% endif %}
 

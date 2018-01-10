@@ -168,7 +168,7 @@ class UpdateHelper
 									/** @var \SplFileInfo $file */
 									if ($oldFile->isFile())
 									{
-										opcache_invalidate($oldFile, true);
+										@opcache_invalidate($oldFile, true);
 									}
 								}
 							}
@@ -190,7 +190,7 @@ class UpdateHelper
 							// Invalidate opcache
 							if (function_exists('opcache_invalidate') && IOHelper::fileExists($destFile))
 							{
-								opcache_invalidate($destFile, true);
+								@opcache_invalidate($destFile, true);
 							}
 
 							IOHelper::copyFile($sourceFile, $destFile);

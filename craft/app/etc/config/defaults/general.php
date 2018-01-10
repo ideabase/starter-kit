@@ -45,7 +45,7 @@ return array(
 	/**
 	 * A list of file extensions that Craft will allow when a user is uploading files.
 	 */
-	'allowedFileExtensions' => '7z,aiff,asf,avi,bmp,csv,doc,docx,fla,flv,gif,gz,gzip,htm,html,jpeg,jpg,js,mid,mov,mp3,mp4,m4a,m4v,mpc,mpeg,mpg,ods,odt,ogg,ogv,pdf,png,potx,pps,ppsm,ppsx,ppt,pptm,pptx,ppz,pxd,qt,ram,rar,rm,rmi,rmvb,rtf,sdc,sitd,svg,swf,sxc,sxw,tar,tgz,tif,tiff,txt,vob,vsd,wav,webm,wma,wmv,xls,xlsx,zip',
+	'allowedFileExtensions' => '7z,aiff,asf,avi,bmp,csv,doc,docx,fla,flv,gif,gz,gzip,htm,html,jp2,jpeg,jpg,jpx,js,m2t,mid,mov,mp3,mp4,m4a,m4v,mpc,mpeg,mpg,ods,odt,ogg,ogv,pdf,png,potx,pps,ppsm,ppsx,ppt,pptm,pptx,ppz,pxd,qt,ram,rar,rm,rmi,rmvb,rtf,sdc,sitd,svg,swf,sxc,sxw,tar,tgz,tif,tiff,txt,vob,vsd,wav,webm,wma,wmv,xls,xlsx,zip',
 
 	/**
 	 * If this is set to true, then a tag name of "Proteines" will also match a tag name of "Protéines". Otherwise,
@@ -450,6 +450,13 @@ return array(
 	'postLoginRedirect' => '',
 
 	/**
+	 * Whether the EXIF data should be preserved when manipulating images.
+	 *
+	 * Setting this to false will reduce the image size a little bit, but all EXIF data will be cleared. This will only have effect if Imagick is in use.
+	 */
+	'preserveExifData' => false,
+
+	/**
 	 * Whether the embedded Image Color Profile (ICC) should be preserved when manipulating images.
 	 *
 	 * Setting this to false will reduce the image size a little bit, but on some Imagick versions can cause images to be saved with
@@ -474,7 +481,7 @@ return array(
 	/**
 	 * The amount of time to wait before Craft purges pending users from the system that have not activated. Set to
 	 * false to disable this feature. Note that if you set this to a time interval, then any content assigned to
-     * a pending user will be deleted as well when the given time interval passes.
+	 * a pending user will be deleted as well when the given time interval passes.
 	 *
 	 * @see http://www.php.net/manual/en/dateinterval.construct.php
 	 */
@@ -537,10 +544,10 @@ return array(
 	'runTasksAutomatically' => true,
 
 	/**
-	 * Words that should be ignored when indexing search keywords and preparing search terms to be matched against the
-	 * keyword index.
+	 * Whether Craft should sanitize uploaded SVG files and strip out potential malicious looking content.
+	 * Should definitely be enabled if you are accepting SVG uploads from untrusted sources.
 	 */
-	'searchIgnoreWords' => array('the', 'and'),
+	'sanitizeSvgUploads' => true,
 
 	/**
 	 * Whether the X-Powered-By header should be sent on each request, helping clients identify that the site is powered by Craft.

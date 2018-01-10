@@ -20,7 +20,7 @@ var LoginForm = Garnish.Base.extend(
 
 	init: function()
 	{
-		this.$form = $('#login-form'),
+		this.$form = $('#login-form');
 		this.$loginNameInput = $('#loginName');
 		this.$loginFields = $('#login-fields');
 		this.$passwordPaneItem = this.$loginFields.children();
@@ -224,7 +224,9 @@ var LoginForm = Garnish.Base.extend(
 			newFormTopMargin = formTopMargin + Math.round(loginFieldsHeight/2);
 
 		this.$form.velocity({marginTop: newFormTopMargin}, 'fast');
-		this.$loginFields.velocity({height: 0}, 'fast');
+		this.$loginFields.velocity({height: 24}, 'fast', $.proxy(function() {
+			this.$loginFields.hide();
+		}, this));
 
 		this.$form.addClass('reset-password');
 		this.$submitBtn.addClass('reset-password');

@@ -1,6 +1,7 @@
 <?php
 namespace Craft;
 
+use enshrined\svgSanitize\Sanitizer;
 use lsolesen\pel\PelJpeg;
 use lsolesen\pel\PelTag;
 use lsolesen\pel\PelDataWindow;
@@ -138,6 +139,11 @@ class ImagesService extends BaseApplicationComponent
 			craft()->config->maxPowerCaptain();
 		}
 
+		// Probably enough for a non-file.
+		if (!filesize($filePath)) {
+		    return true;
+		}
+
 		// Find out how much memory this image is going to need.
 		$imageInfo = getimagesize($filePath);
 		$K64 = 65536;
@@ -163,16 +169,42 @@ class ImagesService extends BaseApplicationComponent
 	}
 
 	/**
-	 * Cleans an image by it's path, clearing embedded JS and PHP code.
+	 * Cleans an image by it's path, clearing embedded potentially malicious embedded code.
 	 *
 	 * @param string $filePath
 	 *
 	 * @return bool
+	 * @throws Exception
 	 */
 	public function cleanImage($filePath)
 	{
 		$cleanedByRotation = false;
 		$cleanedByStripping = false;
+
+		// Special case for SVG files.
+		if (IOHelper::getExtension($filePath) === 'svg')
+		{
+			if (craft()->config->get('sanitizeSvgUploads'))
+			{
+				if (!extension_loaded('dom'))
+				{
+					throw new Exception('Craft needs the PHP DOM extension (http://www.php.net/manual/en/book.dom.php) enabled to upload SVG files.');
+				}
+
+				$sanitizer = new Sanitizer();
+				$svgContents = IOHelper::getFileContents($filePath);
+				$svgContents = $sanitizer->sanitize($svgContents);
+
+				if (!$svgContents)
+				{
+					throw new Exception('There was a problem sanitizing the SVG file contents, likely due to malformed XML.');
+				}
+
+				IOHelper::writeToFile($filePath, $svgContents);
+			}
+
+			return true;
+		}
 
 		try
 		{
@@ -180,6 +212,7 @@ class ImagesService extends BaseApplicationComponent
 			{
 				$cleanedByRotation = $this->rotateImageByExifData($filePath);
 			}
+
 			$cleanedByStripping = $this->stripOrientationFromExifData($filePath);
 		}
 		catch (\Exception $e)
@@ -193,7 +226,9 @@ class ImagesService extends BaseApplicationComponent
 			return true;
 		}
 
-		return $this->loadImage($filePath)->saveAs($filePath, true);
+		$this->loadImage($filePath)->saveAs($filePath, true);
+
+		return true;
 	}
 
 	/**
@@ -210,29 +245,29 @@ class ImagesService extends BaseApplicationComponent
 			return false;
 		}
 
-        if (!($this->isImagick() && method_exists('Imagick', 'getImageOrientation'))) {
-            return false;
-        }
+		if (!($this->isImagick() && method_exists('Imagick', 'getImageOrientation'))) {
+			return false;
+		}
 
-        $image = new \Imagick($filePath);
-        $orientation = $image->getImageOrientation();
+		$image = new \Imagick($filePath);
+		$orientation = $image->getImageOrientation();
 
-        $degrees = false;
+		$degrees = false;
 
-        switch ($orientation) {
-            case ImageHelper::EXIF_IFD0_ROTATE_180: {
-                $degrees = 180;
-                break;
-            }
-            case ImageHelper::EXIF_IFD0_ROTATE_90: {
-                $degrees = 90;
-                break;
-            }
-            case ImageHelper::EXIF_IFD0_ROTATE_270: {
-                $degrees = 270;
-                break;
-            }
-        }
+		switch ($orientation) {
+			case ImageHelper::EXIF_IFD0_ROTATE_180: {
+				$degrees = 180;
+				break;
+			}
+			case ImageHelper::EXIF_IFD0_ROTATE_90: {
+				$degrees = 90;
+				break;
+			}
+			case ImageHelper::EXIF_IFD0_ROTATE_270: {
+				$degrees = 270;
+				break;
+			}
+		}
 
 		if ($degrees === false)
 		{
@@ -301,9 +336,10 @@ class ImagesService extends BaseApplicationComponent
 
 				// Delete the Orientation entry and re-save the file
 				$ifd0->offsetUnset(PelTag::ORIENTATION);
-				$file->saveFile($filePath);
 
-				return true;
+				// PEL's saveFile won't strip malicious embedded code, so fall-through to
+				// return false on purpose, so it gets cleansed later.
+				$file->saveFile($filePath);
 			}
 		}
 

@@ -247,7 +247,6 @@ class EmailService extends BaseApplicationComponent
 	 * @param EmailModel $emailModel
 	 * @param array      $variables
 	 *
-	 * @throws Exception
 	 * @return bool
 	 */
 	private function _sendEmail(UserModel $user, EmailModel $emailModel, $variables = array())
@@ -259,7 +258,9 @@ class EmailService extends BaseApplicationComponent
 
 		if (!isset($emailSettings['protocol']))
 		{
-			throw new Exception(Craft::t('Could not determine how to send the email.  Check your email settings.'));
+		    Craft::log('Could not determine how to send the email. Check your email settings.', LogLevel::Warning);
+
+		    return false;
 		}
 
 		// Fire an 'onBeforeSendEmail' event
@@ -311,7 +312,7 @@ class EmailService extends BaseApplicationComponent
 							StringHelper::isNullOrEmpty($emailSettings['host']) || StringHelper::isNullOrEmpty($emailSettings['port']) || StringHelper::isNullOrEmpty($emailSettings['username']) || StringHelper::isNullOrEmpty($emailSettings['password'])
 						)
 						{
-							throw new Exception(Craft::t('Host, port, username and password must be configured under your email settings.'));
+							throw new Exception('Host, port, username and password must be configured under your email settings.');
 						}
 
 						if (!isset($emailSettings['timeout']))
@@ -437,6 +438,9 @@ class EmailService extends BaseApplicationComponent
 				}
 				else
 				{
+					// TODO: This won't be necessary in 3.0 thanks to Parsedown
+					$emailModel->body = preg_replace('/(?<=[a-zA-Z])_(?=[a-zA-Z])/', '\_', $emailModel->body);
+
 					// They didn't provide an htmlBody, so markdown the body.
 					$renderedHtmlBody = craft()->templates->renderString(StringHelper::parseMarkdown($emailModel->body), $variables);
 					$email->msgHTML($renderedHtmlBody);
@@ -472,7 +476,9 @@ class EmailService extends BaseApplicationComponent
 					'error' => $errorMessage,
 				)));
 
-				throw new Exception(Craft::t('Email error: {error}', array('error' => $errorMessage)));
+				Craft::log('Email error: '.$errorMessage, LogLevel::Error);
+
+				return false;
 			}
 
 			Craft::log('Successfully sent email with subject: '.$email->Subject, LogLevel::Info);

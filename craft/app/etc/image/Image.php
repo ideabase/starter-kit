@@ -366,7 +366,7 @@ class Image extends BaseImage
 		{
 			if (craft()->images->isImagick())
 			{
-				$this->_image->smartResize(new \Imagine\Image\Box($targetWidth, $targetHeight), (bool) craft()->config->get('preserveImageColorProfiles'), $this->_quality);
+				$this->_image->smartResize(new \Imagine\Image\Box($targetWidth, $targetHeight), (bool) craft()->config->get('preserveImageColorProfiles'), (bool) craft()->config->get('preserveExifData'), $this->_quality);
 			}
 			else
 			{
@@ -422,6 +422,8 @@ class Image extends BaseImage
 		if ($autoQuality && in_array($extension, array('jpeg', 'jpg', 'png')))
 		{
 			clearstatcache();
+			craft()->config->maxPowerCaptain();
+
 			$originalSize = IOHelper::getFileSize($this->_imageSourcePath);
 			$tempFile = $this->_autoGuessImageQuality($targetPath, $originalSize, $extension, 0, 200);
 			IOHelper::move($tempFile, $targetPath, true);
@@ -574,9 +576,6 @@ class Image extends BaseImage
 	 */
 	private function _autoGuessImageQuality($tempFileName, $originalSize, $extension, $minQuality, $maxQuality, $step = 0)
 	{
-		// Give ourselves some extra time.
-		@set_time_limit(30);
-
 		if ($step == 0)
 		{
 			$tempFileName = IOHelper::getFolderName($tempFileName).IOHelper::getFileName($tempFileName, false).'-temp.'.$extension;

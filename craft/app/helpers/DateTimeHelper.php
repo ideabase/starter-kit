@@ -16,48 +16,48 @@ class DateTimeHelper
 	// Public Methods
 	// =========================================================================
 
-    /**
-     * Determines whether the given value is an ISO-8601-formatted date, as defined by either
-     * {@link http://php.net/manual/en/class.datetime.php#datetime.constants.atom DateTime::ATOM} or
-     * {@link http://php.net/manual/en/class.datetime.php#datetime.constants.iso8601 DateTime::ISO8601} (with or without
-     * the colon between the hours and minutes of the timezone offset).
-     *
-     * @param mixed $value The value
-     *
-     * @return boolean Whether the value is an ISO-8601 date string
-     */
-    public static function isIso8601($value)
-    {
-        if (is_string($value) && preg_match('/^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d[\+\-]\d\d\:?\d\d$/', $value))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
+	/**
+	 * Determines whether the given value is an ISO-8601-formatted date, as defined by either
+	 * {@link http://php.net/manual/en/class.datetime.php#datetime.constants.atom DateTime::ATOM} or
+	 * {@link http://php.net/manual/en/class.datetime.php#datetime.constants.iso8601 DateTime::ISO8601} (with or without
+	 * the colon between the hours and minutes of the timezone offset).
+	 *
+	 * @param mixed $value The value
+	 *
+	 * @return boolean Whether the value is an ISO-8601 date string
+	 */
+	public static function isIso8601($value)
+	{
+		if (is_string($value) && preg_match('/^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d[\+\-]\d\d\:?\d\d$/', $value))
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 
-    /**
-     * Converts a date to an ISO-8601 string.
-     *
-     * @param mixed $date The date, in any format that {@link toDateTime()} supports.
-     *
-     * @return string|false The date formatted as an ISO-8601 string, or `false` if $date was not a valid date
-     */
-    public static function toIso8601($date)
-    {
-        $date = DateTime::createFromString($date);
+	/**
+	 * Converts a date to an ISO-8601 string.
+	 *
+	 * @param mixed $date The date, in any format that {@link toDateTime()} supports.
+	 *
+	 * @return string|false The date formatted as an ISO-8601 string, or `false` if $date was not a valid date
+	 */
+	public static function toIso8601($date)
+	{
+		$date = DateTime::createFromString($date);
 
-        if ($date)
-        {
-            return $date->format(\DateTime::ATOM);
-        }
-        else
-        {
-            return false;
-        }
-    }
+		if ($date)
+		{
+			return $date->format(\DateTime::ATOM);
+		}
+		else
+		{
+			return false;
+		}
+	}
 
 	/**
 	 * @return DateTime
@@ -277,14 +277,14 @@ class DateTimeHelper
 	/**
 	 * Returns true if given date was yesterday
 	 *
-	 * @param string $date Unix timestamp
+	 * @param int $date Unix timestamp
 	 *
 	 * @return bool true if date was yesterday, false otherwise.
 	 */
 	public static function wasYesterday($date)
 	{
 		$date = new DateTime('@'.$date);
-		$yesterday = new DateTime('@'.strtotime('yesterday'));
+		$yesterday = new DateTime('yesterday', new \DateTimeZone(craft()->getTimeZone()));
 
 		return $date->format('Y-m-d') == $yesterday->format('Y-m-d');
 	}
@@ -292,7 +292,7 @@ class DateTimeHelper
 	/**
 	 * Returns true if given date is in this year
 	 *
-	 * @param string $date Unix timestamp
+	 * @param int $date Unix timestamp
 	 *
 	 * @return bool true if date is in this year, false otherwise.
 	 */
@@ -307,7 +307,7 @@ class DateTimeHelper
 	/**
 	 * Returns true if given date is in this week
 	 *
-	 * @param string $date Unix timestamp
+	 * @param int $date Unix timestamp
 	 *
 	 * @return bool true if date is in this week, false otherwise.
 	 */
@@ -322,7 +322,7 @@ class DateTimeHelper
 	/**
 	 * Returns true if given date is in this month
 	 *
-	 * @param string $date Unix timestamp
+	 * @param int $date Unix timestamp
 	 *
 	 * @return bool True if date is in this month, false otherwise.
 	 */

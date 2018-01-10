@@ -432,21 +432,10 @@ class UserSessionService extends \CWebUser
 
 			if (!craft()->request->isAjaxRequest())
 			{
-				$url = craft()->request->getPath();
-
-				if (($queryString = craft()->request->getQueryStringWithoutPath()))
-				{
-					if (craft()->request->getPathInfo())
-					{
-						$url .= '?'.$queryString;
-					}
-					else
-					{
-						$url .= '&'.$queryString;
-					}
-				}
-
+				$url = UrlHelper::getUrl(craft()->request->getPath(), craft()->request->getQueryStringWithoutPath());
 				$this->setReturnUrl($url);
+				$url = UrlHelper::getUrl(craft()->config->getLoginPath());
+				craft()->request->redirect($url);
 			}
 			elseif (isset($this->loginRequiredAjaxResponse))
 			{
@@ -454,8 +443,7 @@ class UserSessionService extends \CWebUser
 				craft()->end();
 			}
 
-			$url = UrlHelper::getUrl(craft()->config->getLoginPath());
-			craft()->request->redirect($url);
+			throw new HttpException(403, Craft::t('yii','Login Required'));
 		}
 	}
 
@@ -522,7 +510,7 @@ class UserSessionService extends \CWebUser
 	}
 
 	/**
-	 * Logs a user in for solely by their user ID.
+	 * Logs a user in by their user ID.
 	 *
 	 * This method doesn’t have any sort of credential verification, so use it at your own peril.
 	 *
@@ -1016,7 +1004,6 @@ class UserSessionService extends \CWebUser
 	{
 		return !(
 			craft()->request->isGetRequest() &&
-			craft()->request->isCpRequest() &&
 			craft()->request->getParam('dontExtendSession')
 		);
 	}
@@ -1429,7 +1416,7 @@ class UserSessionService extends \CWebUser
 			}
 			else
 			{
-				Craft::log('Tried to restore session from a cookie, but it appears we the data in the cookie is invalid.', LogLevel::Warning);
+				Craft::log('Tried to restore session from a cookie, but it appears the data in the cookie is invalid.', LogLevel::Warning);
 				$this->logout(true);
 			}
 		}
