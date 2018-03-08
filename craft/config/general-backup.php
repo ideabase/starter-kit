@@ -24,6 +24,8 @@ return array(
 	'test.web' => array(
 	    'devMode' => true,
       'siteUrl' => 'http://DEV URL GOES HERE',
+      'cache' => false,
+      'enableTemplateCaching' => false,
       'environmentVariables' => array(
         'basePath' => '',
         'baseUrl'  => 'http://DEV URL GOES HERE',
