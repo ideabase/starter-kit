@@ -6,3 +6,6 @@
 /public/.htaccess
 /public/node_modules
 package-lock.json
+/public/cpresources
+/craft/plugins
+/craft/storage/logs

@@ -1,0 +1,7 @@
+{
+    "require": {
+        "craftcms/cms": "^3.0.0-RC1",
+        "craftcms/redactor": "2.0.0.1",
+        "wbrowar/adminbar": "3.1.5"
+    }
+}
