@@ -1,7 +1,9 @@
 {
     "require": {
-        "craftcms/cms": "^3.0.0-RC1",
+        "craftcms/cms": "3.0.6",
         "craftcms/redactor": "2.0.0.1",
-        "wbrowar/adminbar": "3.1.5"
+        "wbrowar/adminbar": "3.1.5",
+        "mikestecker/craft-videoembedder": "1.0.9",
+        "mmikkel/cp-field-inspect": "1.0.4"
     }
 }

@@ -4,4 +4,5 @@ It may be preferable to IGNORE to entire folder.
 
 File System Path:  This is the relative URL: assets/img/uploads/
 
-URL:  This includes the BaseURL (which you set in the config file): {baseUrl}/assets/img/uploads
+URL:  This includes the BaseURL (which you set in the config file):
+@baseUrl/assets/img/uploads

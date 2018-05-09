@@ -244,22 +244,18 @@
     },
     {
         "name": "composer/spdx-licenses",
-        "version": "1.3.0",
-        "version_normalized": "1.3.0.0",
+        "version": "1.4.0",
+        "version_normalized": "1.4.0.0",
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/composer/spdx-licenses/zipball/7e111c50db92fa2ced140f5ba23b4e261bc77a30",
-            "reference": "7e111c50db92fa2ced140f5ba23b4e261bc77a30",
+            "url": "https://api.github.com/repos/composer/spdx-licenses/zipball/cb17687e9f936acd7e7245ad3890f953770dec1b",
+            "reference": "cb17687e9f936acd7e7245ad3890f953770dec1b",
             "shasum": ""
         },
         "require": {
             "php": "^5.3.2 || ^7.0"
         },
-        "require-dev": {
-            "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.5",
-            "phpunit/phpunit-mock-objects": "2.3.0 || ^3.0"
-        },
-        "time": "2018-01-31T13:17:27+00:00",
+        "time": "2018-04-30T10:33:04+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -272,7 +268,6 @@
                 "Composer\\Spdx\\": "src"
             }
         },
-        "notification-url": "https://packagist.org/downloads/",
         "license": [
             "MIT"
         ],
@@ -302,12 +297,12 @@
     },
     {
         "name": "craftcms/cms",
-        "version": "3.0.5",
-        "version_normalized": "3.0.5.0",
+        "version": "3.0.6",
+        "version_normalized": "3.0.6.0",
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/craftcms/cms/zipball/610f7ac8016a5adcb8606b831afdd6322da57dea",
-            "reference": "610f7ac8016a5adcb8606b831afdd6322da57dea",
+            "url": "https://api.github.com/repos/craftcms/cms/zipball/bbfa79f10458bec30eae41c1bbda29b4bf1bae4a",
+            "reference": "bbfa79f10458bec30eae41c1bbda29b4bf1bae4a",
             "shasum": ""
         },
         "require": {
@@ -348,18 +343,12 @@
             "bower-asset/punycode": "1.3.*",
             "bower-asset/yii2-pjax": "~2.0.1"
         },
-        "require-dev": {
-            "codeception/codeception": "~2.3.3",
-            "codeception/mockery-module": "~0.2.2",
-            "codeception/specify": "~0.4.6",
-            "codeception/verify": "~0.3.3"
-        },
         "suggest": {
             "ext-iconv": "Adds support for more character encodings than PHP’s built-in mb_convert_encoding() function, which Craft will take advantage of when converting strings to UTF-8.",
             "ext-imagick": "Adds support for more image processing formats and options.",
             "ext-intl": "Adds rich internationalization support."
         },
-        "time": "2018-05-01T17:07:42+00:00",
+        "time": "2018-05-08T18:15:48+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -367,7 +356,6 @@
                 "craft\\": "src/"
             }
         },
-        "notification-url": "https://packagist.org/downloads/",
         "license": [
             "proprietary"
         ],
@@ -377,7 +365,15 @@
             "cms",
             "craftcms",
             "yii2"
-        ]
+        ],
+        "support": {
+            "email": "support@craftcms.com",
+            "issues": "https://github.com/craftcms/cms/issues?state=open",
+            "forum": "https://craftcms.stackexchange.com/",
+            "source": "https://github.com/craftcms/cms",
+            "docs": "https://github.com/craftcms/docs",
+            "rss": "https://github.com/craftcms/cms/releases.atom"
+        }
     },
     {
         "name": "craftcms/oauth2-craftid",
@@ -779,6 +775,51 @@
         ]
     },
     {
+        "name": "embed/embed",
+        "version": "v3.3.1",
+        "version_normalized": "3.3.1.0",
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/oscarotero/Embed/zipball/038265bc1169f29ef5e19b7210eff1f223c66b0b",
+            "reference": "038265bc1169f29ef5e19b7210eff1f223c66b0b",
+            "shasum": ""
+        },
+        "require": {
+            "composer/ca-bundle": "^1.0",
+            "ext-curl": "*",
+            "ext-mbstring": "*",
+            "php": "^5.5|^7.0"
+        },
+        "time": "2018-02-24T11:23:18+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Embed\\": "src"
+            }
+        },
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Oscar Otero",
+                "email": "oom@oscarotero.com",
+                "homepage": "http://oscarotero.com",
+                "role": "Developer"
+            }
+        ],
+        "description": "PHP library to retrieve page info using oembed, opengraph, etc",
+        "homepage": "https://github.com/oscarotero/Embed",
+        "keywords": [
+            "embed",
+            "embedly",
+            "oembed",
+            "opengraph",
+            "twitter cards"
+        ]
+    },
+    {
         "name": "enshrined/svg-sanitize",
         "version": "0.8.2",
         "version_normalized": "0.8.2.0",
@@ -1093,12 +1134,12 @@
     },
     {
         "name": "league/flysystem",
-        "version": "1.0.44",
-        "version_normalized": "1.0.44.0",
+        "version": "1.0.45",
+        "version_normalized": "1.0.45.0",
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/168dbe519737221dc87d17385cde33073881fd02",
-            "reference": "168dbe519737221dc87d17385cde33073881fd02",
+            "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/a99f94e63b512d75f851b181afcdf0ee9ebef7e6",
+            "reference": "a99f94e63b512d75f851b181afcdf0ee9ebef7e6",
             "shasum": ""
         },
         "require": {
@@ -1106,11 +1147,6 @@
         },
         "conflict": {
             "league/flysystem-sftp": "<1.0.6"
-        },
-        "require-dev": {
-            "ext-fileinfo": "*",
-            "phpspec/phpspec": "^3.4",
-            "phpunit/phpunit": "^5.7"
         },
         "suggest": {
             "ext-fileinfo": "Required for MimeType",
@@ -1128,7 +1164,7 @@
             "spatie/flysystem-dropbox": "Allows you to use Dropbox storage",
             "srmklive/flysystem-dropbox-v2": "Allows you to use Dropbox storage for PHP 5 applications"
         },
-        "time": "2018-04-06T09:58:14+00:00",
+        "time": "2018-05-07T08:44:23+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1141,7 +1177,6 @@
                 "League\\Flysystem\\": "src/"
             }
         },
-        "notification-url": "https://packagist.org/downloads/",
         "license": [
             "MIT"
         ],
@@ -1268,6 +1303,111 @@
         "keywords": [
             "shell"
         ]
+    },
+    {
+        "name": "mikestecker/craft-videoembedder",
+        "version": "1.0.9",
+        "version_normalized": "1.0.9.0",
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/mikestecker/craft-videoembedder/zipball/59ddb17df8f9473f0f7955e330b727c835b66b01",
+            "reference": "59ddb17df8f9473f0f7955e330b727c835b66b01",
+            "shasum": ""
+        },
+        "require": {
+            "craftcms/cms": "^3.0.0",
+            "embed/embed": "^3.3"
+        },
+        "time": "2018-04-12T19:07:27+00:00",
+        "type": "craft-plugin",
+        "extra": {
+            "name": "Video Embedder",
+            "handle": "video-embedder",
+            "schemaVersion": "1.0.0",
+            "hasCpSettings": false,
+            "hasCpSection": false,
+            "changelogUrl": "https://raw.githubusercontent.com/mikestecker/craft-videoembedder/v1/CHANGELOG.md",
+            "class": "mikestecker\\videoembedder\\VideoEmbedder"
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "mikestecker\\videoembedder\\": "src/"
+            }
+        },
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Mike Stecker",
+                "homepage": "http://github.com/mikestecker"
+            }
+        ],
+        "description": "Craft plugin to generate an embed URL from a YouTube or Vimeo URL.",
+        "keywords": [
+            "cms",
+            "craft",
+            "craft-plugin",
+            "craftcms",
+            "video embedder"
+        ],
+        "support": {
+            "docs": "https://github.com/mikestecker/craft-videoembedder/blob/v1/README.md",
+            "issues": "https://github.com/mikestecker/craft-videoembedder/issues"
+        }
+    },
+    {
+        "name": "mmikkel/cp-field-inspect",
+        "version": "1.0.4",
+        "version_normalized": "1.0.4.0",
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/mmikkel/CpFieldInspect-Craft/zipball/426d9638f8eca0f6a9f1beedb8a945726840d436",
+            "reference": "426d9638f8eca0f6a9f1beedb8a945726840d436",
+            "shasum": ""
+        },
+        "require": {
+            "craftcms/cms": "^3.0.0-RC1"
+        },
+        "time": "2018-03-28T07:58:02+00:00",
+        "type": "craft-plugin",
+        "extra": {
+            "name": "CP Field Inspect",
+            "handle": "cp-field-inspect",
+            "schemaVersion": "1.0.0",
+            "hasCpSettings": false,
+            "hasCpSection": false,
+            "changelogUrl": "https://raw.githubusercontent.com/mmikkel/CpFieldInspect-Craft/master/CHANGELOG.md",
+            "class": "mmikkel\\cpfieldinspect\\CpFieldInspect"
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "mmikkel\\cpfieldinspect\\": "src/"
+            }
+        },
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Mats Mikkel Rummelhoff",
+                "homepage": "http://mmikkel.no"
+            }
+        ],
+        "description": "Inspect field handles and easily edit field settings",
+        "keywords": [
+            "cms",
+            "cp field inspect",
+            "craft",
+            "craft-plugin",
+            "craftcms"
+        ],
+        "support": {
+            "docs": "https://github.com/mmikkel/CpFieldInspect-Craft/blob/master/README.md",
+            "issues": "https://github.com/mmikkel/CpFieldInspect-Craft/issues"
+        }
     },
     {
         "name": "paragonie/random_compat",

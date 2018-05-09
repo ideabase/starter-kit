@@ -47,4 +47,44 @@ return array (
       'editLinks' => 'wbrowar\\adminbar\\services\\EditLinks',
     ),
   ),
+  'mikestecker/craft-videoembedder' => 
+  array (
+    'class' => 'mikestecker\\videoembedder\\VideoEmbedder',
+    'basePath' => $vendorDir . '/mikestecker/craft-videoembedder/src',
+    'handle' => 'video-embedder',
+    'aliases' => 
+    array (
+      '@mikestecker/videoembedder' => $vendorDir . '/mikestecker/craft-videoembedder/src',
+    ),
+    'name' => 'Video Embedder',
+    'version' => '1.0.9',
+    'schemaVersion' => '1.0.0',
+    'description' => 'Craft plugin to generate an embed URL from a YouTube or Vimeo URL.',
+    'developer' => 'Mike Stecker',
+    'developerUrl' => 'http://github.com/mikestecker',
+    'documentationUrl' => 'https://github.com/mikestecker/craft-videoembedder/blob/v1/README.md',
+    'changelogUrl' => 'https://raw.githubusercontent.com/mikestecker/craft-videoembedder/v1/CHANGELOG.md',
+    'hasCpSettings' => false,
+    'hasCpSection' => false,
+  ),
+  'mmikkel/cp-field-inspect' => 
+  array (
+    'class' => 'mmikkel\\cpfieldinspect\\CpFieldInspect',
+    'basePath' => $vendorDir . '/mmikkel/cp-field-inspect/src',
+    'handle' => 'cp-field-inspect',
+    'aliases' => 
+    array (
+      '@mmikkel/cpfieldinspect' => $vendorDir . '/mmikkel/cp-field-inspect/src',
+    ),
+    'name' => 'CP Field Inspect',
+    'version' => '1.0.4',
+    'schemaVersion' => '1.0.0',
+    'description' => 'Inspect field handles and easily edit field settings',
+    'developer' => 'Mats Mikkel Rummelhoff',
+    'developerUrl' => 'http://mmikkel.no',
+    'documentationUrl' => 'https://github.com/mmikkel/CpFieldInspect-Craft/blob/master/README.md',
+    'changelogUrl' => 'https://raw.githubusercontent.com/mmikkel/CpFieldInspect-Craft/master/CHANGELOG.md',
+    'hasCpSettings' => false,
+    'hasCpSection' => false,
+  ),
 );

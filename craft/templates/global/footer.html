@@ -1,0 +1,7 @@
+<footer role="contentinfo" class="global-footer">
+{% set image = footer.footerImage.first() %}
+<img src="{{image.url}}" alt="{{image.title}}" />
+{{footer.email}}
+{{footer.phoneNumber}}
+{{footer.copyright}}
+</footer>

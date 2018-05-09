@@ -1,3 +1,4 @@
+
 {#
  # Layout template
  # ---------------
@@ -13,8 +14,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>{% if title is defined %}{{ title }} - {% endif %}{{ siteName }}</title>
 	<link rel="home" href="{{ siteUrl }}" />
-  <!-- COMMENTED OUT BY DEFAULT (Install the Plugin First): Render SEO Metatags -->
-    {# {% hook 'seomaticRender' %} #}
+
   <!-- Render Favicons -->
   	{% include '_includes/_favicons.html' %}
   <!--Begin Critical CSS -->
@@ -22,25 +22,33 @@
   	 {% include '_includes/critical.css' %}
     </style>
 </head>
+{{ adminbar({ entry: entry }) }}
+
 
 <body>
-
+{#
 		<header role="banner">
       <a id="skip-to-content" href="#content">skip to main content</a>
 			<h1><a href="{{ siteUrl }}">{{ siteName }}</a></h1>
 		</header>
+#}
 
+<!-- Include header -->
+  {% include 'global/header.html' %}
 		<main role="main">
 			{% block content %}
 				<p>If you see me, you haven’t set your <code>{% verbatim %}{% block content %}…{% endblock %}{% endverbatim %}</code> yet.</p>
 				<p>See Twig’s <a href="http://twig.sensiolabs.org/doc/templates.html#template-inheritance">Template Inheritance</a> documentation for an explanation.</p>
 			{% endblock %}
 		</main>
+<!-- Include footer -->
+{% include 'global/footer.html' %}
 
+{#
 		<footer role="contentinfo">
 			Copyright {{ now.year }} {{ craft.request.serverName | ucfirst }}. All rights reserved  •  Built with <a href="http://craftcms.com">Craft</a>
 		</footer>
-
+#}
   <link href="{{ siteUrl }}assets/css/style.css" type="text/css" rel="stylesheet" media="screen"/>
   <script type="text/javascript" src="{{ siteUrl }}assets/js/min/scripts-min.js"></script>
   <!-- Google Analytics Code - don't forget to change the UA ID -->

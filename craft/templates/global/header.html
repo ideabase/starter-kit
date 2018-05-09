@@ -1,0 +1,26 @@
+{% cache globally %}
+<header role="banner">
+	<a id="skip-to-content" href="#content">skip to main content</a>
+	<a href="{{ siteUrl }}">
+		{% for image in header.headerLogo %}
+    	<img src="{{ image.getUrl }}" alt="{{ image.title }}">
+    {% endfor %}
+	</a>
+
+	{% endcache %}
+	{% cache globally %}
+	<nav role="navigation">
+				<ul>
+					<li>
+						<a href="{{ url('services') }}">Services</a>
+					</li>
+					<li>
+						<a href="{{ url('work') }}">Work</a>
+					</li>
+					<li>
+						<a href="{{ url('people') }}">People</a>
+					</li>
+      	</ul>
+	</nav>
+	{% endcache %}
+</header>

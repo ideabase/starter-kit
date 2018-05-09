@@ -1,0 +1,70 @@
+
+{% for block in entry.pageContent.all() %}
+
+    {% if block.type == "body" %}
+    	<section>
+        {{ block.bodyText }}
+        </section>
+
+    {% elseif block.type == "buttonExternalLink" %}
+    	<section>
+    		<a href="{{ block.buttonUrl }}">{{ block.buttonTitle }}</a>
+    	</section>
+
+	{% elseif block.type == "buttonInternalLink" %}
+		<section>
+			<a href="{{ block.buttonLinkInternal.first().url }}">{{ block.buttonNameInternal }}</a>
+		</section>
+
+    {% elseif block.type == "image" %}
+
+        {% set image = block.image.one() %}
+          {% if image | length %}
+          	<section>
+          		<figure>
+          			<img src="{{image.getUrl()}}" alt="{{ image.title }}" />
+          		</figure>
+          	</section>
+          {% endif %}
+
+    {% elseif block.type == "video" %}
+
+    <section>
+    	<figure>
+
+        {% set embed = craft.videoEmbedder.getEmbedUrl(block.videoUrl) %}
+          {% if embed | length %}
+            <iframe src="{{embed}}"></iframe>
+          {% endif %}
+
+    		<figcaption>{{ block.videoCaption }}</figcaption>
+    	</figure>
+    </section>
+
+    {% elseif block.type == "callOut" %}
+    
+    <div>
+    <section>
+        <h2>{{ block.callOut }}</h2>
+        {% set image = block.callOutImage.first() %}
+        {% if image %}
+        	<img src="{{ image.getUrl('panelCallout') }}" alt ="{{ image.title }}" />
+            <div>
+                {{ block.callOutText }}
+            </div>
+        {% else %}
+            {{ block.callOutText }}
+        {% endif %}
+    </section>
+    </div>
+
+    {% elseif block.type == "pullQuote" %}
+
+        <section>
+        		<blockquote>{{ block.pullQuote }}</blockquote>
+        		<cite>{{ block.pullQuoteAuthor }}</cite>
+        </section>
+
+    {% endif %}
+
+{% endfor %}
