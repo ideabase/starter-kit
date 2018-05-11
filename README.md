@@ -21,6 +21,18 @@ IdeaBase Starter Kit v2 - Includes Grunt + Pattern Lab + Craft CMS
 * Set the default password for MySQL to "root"
 * Start Servers
 
+### COMPOSER SETUP
+
+* curl -sS https://getcomposer.org/installer | php - on home directory
+* Sudo $ mv composer.phar /usr/local/bin/composer
+* Enter credentials
+* Type composer to make sure it works
+* Sudo $ mv composer.phar /usr/local/bin/composer
+* Enter credentials
+
+
+Type composer to make sure it works
+
 ### CMS Instructions
 
 * Rename the craft/config/db-backup.php to be db.php
@@ -28,6 +40,7 @@ IdeaBase Starter Kit v2 - Includes Grunt + Pattern Lab + Craft CMS
 * You can "Ignore" the db.php file once it's been edited with the local info so there's no chance of it being overwritten to production.
 * Important - change the public/htaccess file to be .htaccess.  
 * In craft/config/general.php - change the LOCAL url to your actual local URL.
+
 * Go to your local URL/admin to begin CMS setup.
 
 ### Pattern Lab
