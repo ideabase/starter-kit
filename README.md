@@ -7,38 +7,38 @@
 ### Git
 
 1.  Create a New Repository under IdeaBase
-2.  [Install Tower](https://www.git-tower.com/) or [GitHub Desktop](https://desktop.github.com/) (or use command line if you want)
+2.  [Install Tower](https://www.git-tower.com/) or [GitHub Desktop](https://desktop.github.com/) (or use git in a terminal or shell)
 3.  Log into GitHub and [clone the new repository](https://help.github.com/articles/cloning-a-repository/)
-4.  Download the [IdeaBase Starter Kit 2.0 zip file](https://github.com/ideabase/starter_kit2/archive/master.zip) and copy the files into the repository
-5.  Commit and push changes to repository using "[Push - Tower](https://www.git-tower.com/help/mac/branches-and-tags/push)" or "[Publish - Github Desktop](https://services.github.com/on-demand/github-desktop/push-with-github-desktop)"
+4.  Download the [IdeaBase Starter Kit 2.0 .zip file](https://github.com/ideabase/starter_kit2/archive/master.zip) and copy the files into your cloned repository
+5.  Commit and push changes to your repository using "[Push - Tower](https://www.git-tower.com/help/mac/branches-and-tags/push)" or "[Publish - Github Desktop](https://services.github.com/on-demand/github-desktop/push-with-github-desktop)"
 
 ### MAMP (PHP, MySQL)
 
 1.  [Install MAMP Pro](https://www.mamp.info/en/mamp-pro/)
-2.  Under ports, select "set server ports to 80, 81, 443, etc..."
-3.  Set up a new host directory (e.g. `example.web`) and point to the `public/` or `html/` folder (web document root) instead of the project root
-4.  In the hosts tab, click the plus button underneath the box where "localhost" is listed
-5.  If using a CMS, set up a local database
-6.  Set the default password for your database to "root"
+2.  Under ports, check the setting "set server ports to 80, 81, 443, etc..."
+3.  In the hosts tab, click the plus button underneath the table where "localhost" is listed to create a new host
+4.  If using a CMS, create a local database and give it a name
+5.  After creating the host, select it and set the document root to the `public/` or `html/` folder, **not** the project root
+6.  Verify that the password for your database' is "root"
 7.  Start the local server by pressing the start button in MAMP
 
-### Composer (**OSX/Linux only**)
+### Composer
 
-1.  In a terminal window, use cURL to download Composer as a .phar (PHP archive) file in your home directory
+1.  In a terminal or shell, use cURL to download Composer as a .phar (PHP archive) file in your home directory
 
-```bash
+```sh
 curl -sS <https://getcomposer.org/installer> | php ~/
 ```
 
-2.  Next, move the .phar file to the local computer binaries folder, and enter your password when prompted
+2.  Move the .phar file to the local computer binaries folder, and enter your password when prompted by the `sudo` command
 
-```bash
+```sh
 sudo mv ~/composer.phar /usr/local/bin/
 ```
 
-3.  Establish a global alias for the composer command in your ~/.bash_profile
+3.  Establish a global alias for the composer in your shell profile
 
-```bash
+```sh
 vim ~/.bash_profile
 alias composer="php /usr/local/bin/composer.phar"
 ```
@@ -61,19 +61,18 @@ alias composer="php /usr/local/bin/composer.phar"
 
 ### SASS
 
-1.  Install SASS with RubyGems (Ruby is built into OSX, on Windows use the recommended <https://rubyinstaller.org/>)
+-   Install SASS with RubyGems
 
-```bash
+```sh
 gem install sass
 ```
 
 ### Node
 
 1.  [Install Node.js](https://nodejs.org/en/download/)
-2.  Open a new shell
-3.  Install Grunt globally with npm
+2.  In a terminal or shell, install Grunt globally with npm
 
-```bash
+```sh
 npm install -g grunt-cli
 ```
 
