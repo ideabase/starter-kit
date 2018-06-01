@@ -4,7 +4,7 @@
 
 ## Setup Instructions
 
-### Git Instructions
+### Git
 
 1.  Create a New Repository under IdeaBase
 2.  [Install Tower](https://www.git-tower.com/) or [GitHub Desktop](https://desktop.github.com/) (or use command line if you want)
@@ -22,7 +22,7 @@
 6.  Set the default password for your database to "root"
 7.  Start the local server by pressing the start button in MAMP
 
-### Composer Setup (OSX/Linux)
+### Composer (**OSX/Linux only**)
 
 1.  In a terminal window, use cURL to download Composer as a .phar (PHP archive) file in your home directory
 
@@ -46,7 +46,7 @@ alias composer="php /usr/local/bin/composer.phar"
 4.  Execute `composer` in your project to make sure the alias works globally
 5.  Run `composer update` within the project to update dependencies.
 
-### Craft CMS Instructions
+### Craft CMS
 
 1.  Rename `craft/config/db-backup.php` to `db.php`
 2.  Edit `craft/config/db-backup.php` file with your local database name
@@ -59,23 +59,25 @@ alias composer="php /usr/local/bin/composer.phar"
 
 -   If using Pattern Lab, change the "htaccess" file in the public/lab folder to .htaccess, which will automatically redirect visitors at `/lab` to the `/lab/public` directory
 
-### Command Line Instructions
+### SASS
 
-1.  [Install Node.js](https://nodejs.org/en/download/)
-2.  Open the command line interface
-3.  Install SASS with RubyGems (Ruby is built into OSX, on Windows use the recommended <https://rubyinstaller.org/>)
+1.  Install SASS with RubyGems (Ruby is built into OSX, on Windows use the recommended <https://rubyinstaller.org/>)
 
 ```bash
 gem install sass
 ```
 
-4.  Install Grunt globally with npm
+### Node
+
+1.  [Install Node.js](https://nodejs.org/en/download/)
+2.  Open a new shell
+3.  Install Grunt globally with npm
 
 ```bash
 npm install -g grunt-cli
 ```
 
-5.  Navigate to your project's web document root (the `public/` or `html/` folder) and execute the command `grunt` to ensure that Grunt is working properly
+4.  Navigate to your project's web document root (the `public/` or `html/` folder) and execute the command `grunt` to ensure that Grunt is working properly
 
 ##### Grunt will do the following:
 
@@ -85,6 +87,4 @@ npm install -g grunt-cli
 -   Autobuild the Pattern Lab files (if needed)
 -   Autorefresh the browser when HTML or CSS files are updated
 
-* * *
-
-**TODO: Fix critical CSS **
+[comment]: # (TODO: Fix critical CSS)
