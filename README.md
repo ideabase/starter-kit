@@ -60,7 +60,7 @@ alias composer="php /usr/local/bin/composer.phar"
 
 ### SASS
 
--   Install SASS with RubyGems
+-   Install SASS with RubyGems (Ruby is preinstalled on OSX)
 
 ```sh
 gem install sass
