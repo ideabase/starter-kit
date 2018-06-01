@@ -36,7 +36,7 @@ curl -sS <https://getcomposer.org/installer> | php ~/
 sudo mv ~/composer.phar /usr/local/bin/
 ```
 
-3.  Establish a global alias for the composer in your shell profile
+3.  Establish a global alias for Composer in your shell profile
 
 ```sh
 vim ~/.bash_profile
@@ -44,7 +44,6 @@ alias composer="php /usr/local/bin/composer.phar"
 ```
 
 4.  Execute `composer` in your project to make sure the alias works globally
-5.  Run `composer update` within the project to update dependencies.
 
 ### Craft CMS
 
