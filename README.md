@@ -1,6 +1,6 @@
 # IdeaBase Starter Kit 2.0
 
-#### IdeaBase Starter Kit v2: Includes Grunt, Pattern Lab, Craft CMS.
+#### IdeaBase Starter Kit v2: Includes Grunt, Pattern Lab, Craft CMS
 
 ## Setup Instructions
 
