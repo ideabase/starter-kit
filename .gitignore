@@ -9,3 +9,4 @@ package-lock.json
 /public/cpresources
 /craft/plugins
 /craft/storage/logs
+/craft/vendor/composer/composer/doc/fixtures/repo-composer-with-providers/p
