@@ -1,69 +1,44 @@
-# IdeaBase Starter Kit 2.0
-IdeaBase Starter Kit v2 - Includes Grunt + Pattern Lab + Craft CMS
+# IdeaBase Starter Kit (Craft 3)
 
-## Setup Instructions
+## Setup
 
-### GitHub Instructions
+### GitHub
 
-* Create a New Repository under IdeaBase
-* Install Tower https://www.git-tower.com/mac/ or GitHub Desktop (or use command line if you want)
-* Log in with GitHub credentials and clone the new repository
-* Download the IdeaBase Starter Kit 2.0 zip file and copy the files into the repository
-* Commit and push changes to repository using "Push - Tower" or "Publish - Github Desktop"
+- Create a new repository under IdeaBase's account
+- Clone the repository to your computer using your Git client of choice
+- Download the compressed (.zip) Starter Kit from GitHub and copy its contents to the cloned repository
 
-### MAMP (PHP, MySQL)
+### Local Web Server
 
-* Install MAMP Pro http://mamp.info
-* Under ports - click the button to Set server ports to 80, 81, etc...
-* Set up a new host directory (aka something.web) and point to the "public" or "html" folder instead of the root
- * Click the plus button underneath the box where "localhost" is listed
-* Set up a local database, if using a CMS
-* Set the default password for MySQL to "root"
-* Start Servers
+- Download and install [MAMP Pro](https://www.mamp.info/en/downloads/)
+- In the Ports tab, click the button that sets server ports to 80, 81, 443, 7443, 3306, and 11211
+- In MAMP, open the hosts tab and click the "+" button below the list of hosts to create a new host
+- Name the host and give it a top-level domain that will not conflict with existing websites, like ".local" or ".web"
+- Click the folder icon across from "Document root" and select the `httpdocs/` folder in your cloned repository
 
-### COMPOSER SETUP
+### Database
 
-* curl -sS https://getcomposer.org/installer | php - on home directory
-* Sudo $ mv composer.phar /usr/local/bin/composer
-* Enter credentials
-* Type composer to make sure it works
-* Sudo $ mv composer.phar /usr/local/bin/composer
-* Enter credentials
+- Open [phpMyAdmin](http://localhost/phpMyAdmin/?lang=en&language=English) and create a new database
+- In the new database, import `db_backup.zip` from the Starter Kit
 
+### CMS
 
-Type composer to make sure it works
+- In the project repository, rename the `.env.backup` file to .env and enter the missing information within
+- In `config/general.php` make sure that the dev environment URL matches the hostname you created in MAMP
 
-### CMS Instructions
+### Node.js
 
-* Rename the craft/config/db-backup.php to be db.php
-* Edit the craft/config/db-backup.php file with the LOCAL database name (assuming the password and user name are root)
-* You can "Ignore" the db.php file once it's been edited with the local info so there's no chance of it being overwritten to production.
-* Important - change the public/htaccess file to be .htaccess.  
-* In craft/config/general.php - change the LOCAL url to your actual local URL.
+- Install [Node.js](https://nodejs.org/en/download/) and open a terminal window
+- Change directories into the httpdocs folder
+```sh
+cd httpdocs
+``` 
+- Install the required node modules
+```sh
+npm i
+```
+- After installation, Grunt can be used to compile SCSS into CSS and minify CSS and JS files with the command `grunt`
 
-* Go to your local URL/admin to begin CMS setup.
+### Post-Installation
 
-### Pattern Lab
-
-* If using Pattern Lab, change the "htaccess" file in the public/lab folder to .htaccess, which will automatically redirect visitors to /lab to the /lab/public directory
-
-### Command Line Instructions
-
-* Install Node.js for your OS https://nodejs.org/en/download/
-* Open the command line interface
-* Type "sudo gem install sass" and enter
-* Type "sudo npm install -g grunt-cli" and enter
-* Navigate to the directory where your project is located (the public or html folder)
-* Type "sudo npm install" and enter
-* Type "grunt" and hit enter.
-* Save a file to test grunt build process
-
-Grunt will do the following:
-
-* Compile all sass in compressed format
-* Autoprefix CSS
-* Combine and compress all JavaScript files
-* Autobuild the Pattern Lab files (if needed)
-* Autorefresh the browser when HTML or CSS files are updated
-
-**To do:  Fix the critical CSS **
+- Open your new local website in a web browser (you may need to type http:// before the hostname)
