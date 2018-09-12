@@ -42,3 +42,11 @@ npm i
 ## Post-Setup
 
 - Open your new local website in a web browser (you may need to type "http://" before the hostname)
+- Be sure to create useful layouts that will be reusable throughout parts of your site (see the [twig documentation](https://twig.symfony.com/doc/2.x/tags/extends.html))
+
+## Resources
+
+- [Craft 3 Documentation](https://docs.craftcms.com/v3/)
+- [Craft 3 Class Reference](https://docs.craftcms.com/api/v3/)
+- [Craft CMS Stack Exchange](https://craftcms.stackexchange.com/)
+- [Twig Documentation](https://twig.symfony.com/doc/2.x/)

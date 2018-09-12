@@ -23,6 +23,9 @@ return [
         // Control Panel trigger word
         'cpTrigger' => 'admin',
 
+        // Login path
+        'loginPath' => 'admin/login',
+
         // The secure key Craft will use for hashing and encrypting data
         'securityKey' => getenv('SECURITY_KEY'),
     ],
@@ -30,7 +33,8 @@ return [
     // Dev environment settings
     'dev' => [
         // Base site URL
-        'siteUrl' => 'YOUR LOCAL URL HERE',
+        // e.g. http://ideabase.web
+        'siteUrl' => 'LOCAL URL (MAMP hostname) HERE',
 
         // Dev Mode (see https://craftcms.com/support/dev-mode)
         'devMode' => true,
@@ -45,6 +49,6 @@ return [
     // Production environment settings
     'production' => [
         // Base site URL
-        'siteUrl' => 'YOUR PRODUCTION URL HERE',
+        'siteUrl' => 'PRODUCTION URL HERE',
     ],
 ];
