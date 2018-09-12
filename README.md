@@ -23,7 +23,7 @@
 
 ### CMS
 
-- In the project repository, rename the `.env.backup` file to .env and enter the missing information within
+- In the project repository, rename the `.env.backup` file to `.env` and enter your database and site information within the file
 - In `config/general.php` make sure that the dev environment URL matches the hostname you created in MAMP
 
 ### Node.js
@@ -37,8 +37,8 @@ cd httpdocs
 ```sh
 npm i
 ```
-- After installation, Grunt can be used to compile SCSS into CSS and minify CSS and JS files with the command `grunt`
+- After installation, Grunt can be used with the command `grunt` in the `httpdocs/` folder to compile SCSS into CSS and minify CSS and JS files
 
-### Post-Installation
+## Post-Setup
 
-- Open your new local website in a web browser (you may need to type http:// before the hostname)
+- Open your new local website in a web browser (you may need to type "http://" before the hostname)
