@@ -1,9 +1,10 @@
 httpdocs/assets/img/uploads/
+!httpdocs/assets/img/uploads/logo.png
 httpdocs/package-lock.json
 storage/backups/
 storage/logs/
 storage/runtime/
-vendor/composer/composer/doc/fixtures/repo-composer-with-providers/p
+vendor/composer/composer/doc/fixtures/repo-composer-with-providers/p/
 
 **/.DS_Store
 **/.sass-cache/
