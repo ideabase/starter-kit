@@ -201,8 +201,8 @@ Possible values include:
 
 ```php
 // Fetch categories created last month
-$start = new \DateTime('first day of next month')->format(\DateTime::ATOM);
-$end = new \DateTime('first day of this month')->format(\DateTime::ATOM);
+$start = (new \DateTime('first day of last month'))->format(\DateTime::ATOM);
+$end = (new \DateTime('first day of this month'))->format(\DateTime::ATOM);
 
 $categories = \craft\elements\Category::find()
     ->dateCreated(['and', ">= {$start}", "< {$end}"])
@@ -239,7 +239,7 @@ Possible values include:
 
 ```php
 // Fetch categories updated in the last week
-$lastWeek = new \DateTime('1 week ago')->format(\DateTime::ATOM);
+$lastWeek = (new \DateTime('1 week ago'))->format(\DateTime::ATOM);
 
 $categories = \craft\elements\Category::find()
     ->dateUpdated(">= {$lastWeek}")
@@ -1048,6 +1048,31 @@ Possible values include:
 // Fetch categories with a title that contains "Foo"
 $categories = \craft\elements\Category::find()
     ->title('*Foo*')
+    ->all();
+```
+:::
+
+
+### `trashed`
+
+Narrows the query results to only categories that have been soft-deleted.
+
+
+
+
+
+::: code
+```twig
+{# Fetch trashed categories #}
+{% set categories = {twig-function}
+    .trashed()
+    .all() %}
+```
+
+```php
+// Fetch trashed categories
+$categories = \craft\elements\Category::find()
+    ->trashed()
     ->all();
 ```
 :::

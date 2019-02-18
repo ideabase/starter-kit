@@ -56,7 +56,23 @@ class GeneralConfig extends BaseObject
      */
     public $aliases = [];
     /**
+     * @var bool Whether admins should be allowed to make administrative changes to the system.
+     *
+     * If this is disabled, the Settings and Plugin Store sections will be hidden,
+     * the Craft edition and Craft/plugin versions will be locked, and the project config will become read-only.
+     *
+     * Therefore you should only disable this in production environments when [[useProjectConfigFile]] is enabled,
+     * and you have a deployment workflow that runs `composer install` automatically on deploy.
+     *
+     * ::: warning
+     * Don’t disable this setting until **all** environments have been updated to Craft 3.1.0 or later.
+     * :::
+     */
+    public $allowAdminChanges = true;
+    /**
      * @var bool Whether Craft should allow system and plugin updates in the Control Panel, and plugin installation from the Plugin Store.
+     *
+     * This setting will automatically be disabled if [[allowAdminChanges]] is disabled.
      */
     public $allowUpdates = true;
     /**
@@ -73,7 +89,8 @@ class GeneralConfig extends BaseObject
      */
     public $allowUppercaseInSlug = false;
     /**
-     * @var bool Whether users should automatically be logged in after activating their account.
+     * @var bool Whether users should automatically be logged in after activating their account or resetting
+     * their password.
      */
     public $autoLoginAfterAccountActivation = false;
     /**
@@ -233,7 +250,7 @@ class GeneralConfig extends BaseObject
      * - `5` – Friday
      * - `6` – Saturday
      */
-    public $defaultWeekStartDay = 0;
+    public $defaultWeekStartDay = 1;
     /**
      * @var bool By default, Craft will require a 'password' field to be submitted on front-end, public
      * user registrations. Setting this to `true` will no longer require it on the initial registration form.
@@ -247,6 +264,16 @@ class GeneralConfig extends BaseObject
      * @var bool Whether the system should run in [Dev Mode](https://craftcms.com/support/dev-mode).
      */
     public $devMode = false;
+    /**
+     * @var string[] Array of plugin handles that should be disabled, regardless of what the project config says.
+     * ---
+     * ```php
+     * 'dev' => [
+     *     'disabledPlugins' => ['webhooks'],
+     * ],
+     * ```
+     */
+    public $disabledPlugins = [];
     /**
      * @var bool Whether to use a cookie to persist the CSRF token if [[enableCsrfProtection]] is enabled. If false, the CSRF token
      * will be stored in session under the 'csrfTokenName' config setting name. Note that while storing CSRF tokens in
@@ -353,10 +380,10 @@ class GeneralConfig extends BaseObject
      */
     public $ipHeaders;
     /**
-     * @var bool|null Whether the site is currently online or not. If set to `true` or `false`, it will take precedence over the
+     * @var bool|null Whether the site is currently live. If set to `true` or `false`, it will take precedence over the
      * System Status setting in Settings → General.
      */
-    public $isSystemOn;
+    public $isSystemLive;
     /**
      * @var bool Whether non-ASCII characters in auto-generated slugs should be converted to ASCII (i.e. ñ → n).
      *
@@ -422,19 +449,37 @@ class GeneralConfig extends BaseObject
     /**
      * @var string The string preceding a number which Craft will look for when determining if the current request is for a
      * particular page in a paginated list of pages.
+     *
+     * Example Value | Example URI
+     * ------------- | -----------
+     * `p` | `/news/p5`
+     * `page` | `/news/page5`
+     * `page/` | `/news/page/5`
+     * `?page` | `/news?page=5`
+     *
+     * ::: tip
+     * If you want to set this to `?p` (e.g. `/news?p=5`), you will need to change your [[$pathParam]] setting as well,
+     * which is set to `p` by default, and if your server is running Apache, you will need to update the redirect code
+     * in your `.htaccess` file to match your new `pathParam` value.
+     * :::
      */
     public $pageTrigger = 'p';
     /**
      * @var string The query string param that Craft will check when determining the request's path.
+     *
+     * ::: tip
+     * If you change this and your server is running Apache, don’t forget to update the redirect code in your
+     * `.htaccess` file to match the new value.
+     * :::
      */
     public $pathParam = 'p';
     /**
-     * @var string The maximum amount of memory Craft will try to reserve during memory intensive operations such as zipping,
+     * @var string|null The maximum amount of memory Craft will try to reserve during memory intensive operations such as zipping,
      * unzipping and updating. Defaults to an empty string, which means it will use as much memory as it possibly can.
      *
      * See <http://php.net/manual/en/faq.using.php#faq.using.shorthandbytes> for a list of acceptable values.
      */
-    public $phpMaxMemoryLimit = '';
+    public $phpMaxMemoryLimit;
     /**
      * @var string The name of the PHP session cookie.
      * @see https://php.net/manual/en/function.session-name.php
@@ -658,6 +703,18 @@ class GeneralConfig extends BaseObject
      */
     public $secureProtocolHeaders;
     /**
+     * @var mixed The amount of time before a soft-deleted item will be up for hard-deletion by garbage collection.
+     *
+     * Set to `0` if you don’t ever want to delete soft-deleted items.
+     *
+     * See [[ConfigHelper::durationInSeconds()]] for a list of supported value types.
+     */
+    public $softDeleteDuration = 2592000;
+    /**
+     * @var bool Whether user IP addresses should be stored/logged by the system.
+     */
+    public $storeUserIps = false;
+    /**
      * @var bool Whether Twig runtime errors should be suppressed.
      *
      * If it is set to `true`, the errors will still be logged to Craft’s log files.
@@ -686,7 +743,7 @@ class GeneralConfig extends BaseObject
      */
     public $translationDebugOutput = false;
     /**
-     * @var string The query string parameter name that tokens should be set to.
+     * @var string The query string parameter name that Craft tokens should be set to.
      */
     public $tokenParam = 'token';
     /**
@@ -747,6 +804,14 @@ class GeneralConfig extends BaseObject
      */
     public $useFileLocks;
     /**
+     * @var bool Whether the project config should be saved out to `config/project.yaml`.
+     *
+     * If set to `true`, a hard copy of your system’s project config will be saved in `config/project.yaml`,
+     * and any changes to `config/project.yaml` will be applied back to the system, making it possible for
+     * multiple environments to share the same project config despite having separate databases.
+     */
+    public $useProjectConfigFile = false;
+    /**
      * @var mixed The amount of time a user verification code can be used before expiring.
      *
      * See [[ConfigHelper::durationInSeconds()]] for a list of supported value types.
@@ -776,6 +841,7 @@ class GeneralConfig extends BaseObject
             'restoreDbOnUpdateFailure' => 'restoreOnUpdateFailure',
             'activateAccountFailurePath' => 'invalidUserTokenPath',
             'validationKey' => 'securityKey',
+            'isSystemOn' => 'isSystemLive',
         ];
 
         $configFilePath = null;
@@ -859,6 +925,7 @@ class GeneralConfig extends BaseObject
         $this->purgePendingUsersDuration = ConfigHelper::durationInSeconds($this->purgePendingUsersDuration);
         $this->rememberUsernameDuration = ConfigHelper::durationInSeconds($this->rememberUsernameDuration);
         $this->rememberedUserSessionDuration = ConfigHelper::durationInSeconds($this->rememberedUserSessionDuration);
+        $this->softDeleteDuration = ConfigHelper::durationInSeconds($this->softDeleteDuration);
         $this->userSessionDuration = ConfigHelper::durationInSeconds($this->userSessionDuration);
         $this->verificationCodeDuration = ConfigHelper::durationInSeconds($this->verificationCodeDuration);
 

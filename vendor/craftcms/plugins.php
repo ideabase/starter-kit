@@ -38,7 +38,7 @@ return array (
       '@craft/redactor' => $vendorDir . '/craftcms/redactor/src',
     ),
     'name' => 'Redactor',
-    'version' => '2.1.7',
+    'version' => '2.3.1',
     'description' => 'Edit rich text content in Craft CMS using Redactor by Imperavi.',
     'developer' => 'Pixel & Tonic',
     'developerUrl' => 'https://pixelandtonic.com/',

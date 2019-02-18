@@ -130,8 +130,8 @@ Possible values include:
 
 ```php
 // Fetch global sets created last month
-$start = new \DateTime('first day of next month')->format(\DateTime::ATOM);
-$end = new \DateTime('first day of this month')->format(\DateTime::ATOM);
+$start = (new \DateTime('first day of last month'))->format(\DateTime::ATOM);
+$end = (new \DateTime('first day of this month'))->format(\DateTime::ATOM);
 
 $globalSets = \craft\elements\GlobalSet::find()
     ->dateCreated(['and', ">= {$start}", "< {$end}"])
@@ -168,7 +168,7 @@ Possible values include:
 
 ```php
 // Fetch global sets updated in the last week
-$lastWeek = new \DateTime('1 week ago')->format(\DateTime::ATOM);
+$lastWeek = (new \DateTime('1 week ago'))->format(\DateTime::ATOM);
 
 $globalSets = \craft\elements\GlobalSet::find()
     ->dateUpdated(">= {$lastWeek}")
@@ -486,6 +486,31 @@ The current site will be used by default.
 // Fetch global sets from the site with an ID of 1
 $globalSets = \craft\elements\GlobalSet::find()
     ->siteId(1)
+    ->all();
+```
+:::
+
+
+### `trashed`
+
+Narrows the query results to only global sets that have been soft-deleted.
+
+
+
+
+
+::: code
+```twig
+{# Fetch trashed global sets #}
+{% set globalSets = {twig-function}
+    .trashed()
+    .all() %}
+```
+
+```php
+// Fetch trashed global sets
+$globalSets = \craft\elements\GlobalSet::find()
+    ->trashed()
     ->all();
 ```
 :::
