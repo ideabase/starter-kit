@@ -9,16 +9,17 @@ namespace craft\services;
 
 use Craft;
 use craft\base\Plugin;
+use craft\errors\OperationAbortedException;
 use craft\events\ConfigEvent;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\FileHelper;
 use craft\helpers\Json;
+use craft\helpers\ProjectConfig as ProjectConfigHelper;
 use craft\helpers\Path as PathHelper;
 use Symfony\Component\Yaml\Yaml;
 use yii\base\Application;
 use yii\base\Component;
 use yii\base\ErrorException;
-use yii\base\Event;
 use yii\base\Exception;
 use yii\base\NotSupportedException;
 use yii\web\ServerErrorHttpException;
@@ -120,6 +121,13 @@ class ProjectConfig extends Component
     public $maxBackups = 50;
 
     /**
+     * @var int The maximum number of times deferred events can be re-deferred before we give up on them
+     * @see defer()
+     * @see _applyChanges()
+     */
+    public $maxDefers = 500;
+
+    /**
      * @var bool Whether the project config is read-only.
      */
     public $readOnly = false;
@@ -210,6 +218,13 @@ class ProjectConfig extends Component
      * @var array The current changeset being applied, if applying changes by array.
      */
     private $_changesBeingApplied;
+
+    /**
+     * @var array Deferred config sync events
+     * @see defer()
+     * @see _applyChanges()
+     */
+    private $_deferredEvents = [];
 
     // Public methods
     // =========================================================================
@@ -326,6 +341,10 @@ class ProjectConfig extends Component
      */
     public function set(string $path, $value)
     {
+        if (\is_array($value)) {
+            $value = ProjectConfigHelper::cleanupConfig($value);
+        }
+
         if ($value !== $this->get($path)) {
             if ($this->readOnly) {
                 throw new NotSupportedException('Changes to the project config are not possible while in read-only mode.');
@@ -570,38 +589,19 @@ class ProjectConfig extends Component
      */
     public function saveModifiedConfigData()
     {
-        $traverseAndClean = function(&$array) use (&$traverseAndClean) {
-            $remove = [];
-            foreach ($array as $key => &$value) {
-                if (\is_array($value)) {
-                    $traverseAndClean($value);
-                    if (empty($value)) {
-                        $remove[] = $key;
-                    }
-                }
-            }
-
-            // Remove empty stuff
-            foreach ($remove as $removeKey) {
-                unset($array[$removeKey]);
-            }
-
-            ksort($array);
-        };
-
         if (!empty($this->_modifiedYamlFiles) && $this->_useConfigFile()) {
             // Save modified yaml files
 
             foreach (array_keys($this->_modifiedYamlFiles) as $filePath) {
                 $data = $this->_parsedConfigs[$filePath];
-                $traverseAndClean($data);
+                $data = ProjectConfigHelper::cleanupConfig($data);
                 FileHelper::writeToFile($filePath, Yaml::dump($data, 20, 2));
             }
         }
 
         if (($this->_updateConfigMap && $this->_useConfigFile()) || $this->_updateConfig) {
             $previousConfig = $this->_getStoredConfig();
-            $traverseAndClean($previousConfig);
+            $value = ProjectConfigHelper::cleanupConfig($previousConfig);
             $this->_storeYamlHistory($previousConfig);
 
             $info = Craft::$app->getInfo();
@@ -797,6 +797,18 @@ class ProjectConfig extends Component
     }
 
     /**
+     * Defers an event until all other project config changes have been processed.
+     *
+     * @param ConfigEvent $event
+     * @param callable $handler
+     */
+    public function defer(ConfigEvent $event, callable $handler)
+    {
+        Craft::info('Deferring event handler for ' . $event->path, __METHOD__);
+        $this->_deferredEvents[] = [$event, $event->tokenMatches, $handler];
+    }
+
+    /**
      * Registers a config change event listener, for a specific config path pattern.
      *
      * @param string $event The event name
@@ -833,6 +845,7 @@ class ProjectConfig extends Component
      * Applies changes from a configuration array.
      *
      * @param array $changes array nested array with keys `removedItems`, `changedItems` and `newItems`
+     * @throws OperationAbortedException
      */
     private function _applyChanges(array $changes)
     {
@@ -860,6 +873,23 @@ class ProjectConfig extends Component
             foreach ($changes['newItems'] as $itemPath) {
                 $this->processConfigChanges($itemPath);
             }
+        }
+
+        $defers = -count($this->_deferredEvents);
+        while (!empty($this->_deferredEvents)) {
+            if ($defers > $this->maxDefers) {
+                throw new OperationAbortedException('Maximum number of deferred events reached.');
+            }
+
+            /** @var ConfigEvent $event */
+            /** @var string[]|null $tokenMatches */
+            /** @var callable $handler */
+            list($event, $tokenMatches, $handler) = array_shift($this->_deferredEvents);
+            Craft::info('Re-triggering deferred event for ' . $event->path, __METHOD__);
+            $event->tokenMatches = $tokenMatches;
+            $handler($event);
+            $event->tokenMatches = null;
+            $defers++;
         }
 
         Craft::info('Finalizing configuration parsing', __METHOD__);

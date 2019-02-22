@@ -1,9 +1,9 @@
 {
   "require": {
-    "craftcms/cms": "3.1.12",
+    "craftcms/cms": "3.1.14",
     "vlucas/phpdotenv": "^2.4.0",
     "wbrowar/adminbar": "3.1.6",
-    "craftcms/redactor": "2.3.1"
+    "craftcms/redactor": "2.3.2"
   },
   "autoload": {
     "psr-4": {
