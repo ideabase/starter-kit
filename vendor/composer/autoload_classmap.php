@@ -1610,6 +1610,7 @@ return array(
     'craft\\console\\controllers\\InstallController' => $vendorDir . '/craftcms/cms/src/console/controllers/InstallController.php',
     'craft\\console\\controllers\\MigrateController' => $vendorDir . '/craftcms/cms/src/console/controllers/MigrateController.php',
     'craft\\console\\controllers\\ProjectConfigController' => $vendorDir . '/craftcms/cms/src/console/controllers/ProjectConfigController.php',
+    'craft\\console\\controllers\\ResaveController' => $vendorDir . '/craftcms/cms/src/console/controllers/ResaveController.php',
     'craft\\console\\controllers\\ServeController' => $vendorDir . '/craftcms/cms/src/console/controllers/ServeController.php',
     'craft\\console\\controllers\\SetupController' => $vendorDir . '/craftcms/cms/src/console/controllers/SetupController.php',
     'craft\\console\\controllers\\UpdateController' => $vendorDir . '/craftcms/cms/src/console/controllers/UpdateController.php',

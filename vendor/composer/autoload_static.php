@@ -1995,6 +1995,7 @@ class ComposerStaticInit531abb82119048e37a570d64920e2432
         'craft\\console\\controllers\\InstallController' => __DIR__ . '/..' . '/craftcms/cms/src/console/controllers/InstallController.php',
         'craft\\console\\controllers\\MigrateController' => __DIR__ . '/..' . '/craftcms/cms/src/console/controllers/MigrateController.php',
         'craft\\console\\controllers\\ProjectConfigController' => __DIR__ . '/..' . '/craftcms/cms/src/console/controllers/ProjectConfigController.php',
+        'craft\\console\\controllers\\ResaveController' => __DIR__ . '/..' . '/craftcms/cms/src/console/controllers/ResaveController.php',
         'craft\\console\\controllers\\ServeController' => __DIR__ . '/..' . '/craftcms/cms/src/console/controllers/ServeController.php',
         'craft\\console\\controllers\\SetupController' => __DIR__ . '/..' . '/craftcms/cms/src/console/controllers/SetupController.php',
         'craft\\console\\controllers\\UpdateController' => __DIR__ . '/..' . '/craftcms/cms/src/console/controllers/UpdateController.php',

@@ -1,31 +1,26 @@
 [
     {
         "name": "cebe/markdown",
-        "version": "1.1.2",
-        "version_normalized": "1.1.2.0",
+        "version": "1.2.1",
+        "version_normalized": "1.2.1.0",
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/cebe/markdown/zipball/25b28bae8a6f185b5030673af77b32e1163d5c6e",
-            "reference": "25b28bae8a6f185b5030673af77b32e1163d5c6e",
+            "url": "https://api.github.com/repos/cebe/markdown/zipball/9bac5e971dd391e2802dca5400bbeacbaea9eb86",
+            "reference": "9bac5e971dd391e2802dca5400bbeacbaea9eb86",
             "shasum": ""
         },
         "require": {
             "lib-pcre": "*",
             "php": ">=5.4.0"
         },
-        "require-dev": {
-            "cebe/indent": "*",
-            "facebook/xhprof": "*@dev",
-            "phpunit/phpunit": "4.1.*"
-        },
-        "time": "2017-07-16T21:13:23+00:00",
+        "time": "2018-03-26T11:24:36+00:00",
         "bin": [
             "bin/markdown"
         ],
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "1.1.x-dev"
+                "dev-master": "1.2.x-dev"
             }
         },
         "installation-source": "dist",
@@ -34,7 +29,6 @@
                 "cebe\\markdown\\": ""
             }
         },
-        "notification-url": "https://packagist.org/downloads/",
         "license": [
             "MIT"
         ],
@@ -60,11 +54,6 @@
         "name": "composer/ca-bundle",
         "version": "1.1.4",
         "version_normalized": "1.1.4.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/composer/ca-bundle.git",
-            "reference": "558f321c52faeb4828c03e7dc0cfe39a09e09a2d"
-        },
         "dist": {
             "type": "zip",
             "url": "https://api.github.com/repos/composer/ca-bundle/zipball/558f321c52faeb4828c03e7dc0cfe39a09e09a2d",
@@ -302,12 +291,12 @@
     },
     {
         "name": "craftcms/cms",
-        "version": "3.1.14",
-        "version_normalized": "3.1.14.0",
+        "version": "3.1.15",
+        "version_normalized": "3.1.15.0",
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/craftcms/cms/zipball/c917b9dab1e79911d82ed5933f89058bdc9ffc76",
-            "reference": "c917b9dab1e79911d82ed5933f89058bdc9ffc76",
+            "url": "https://api.github.com/repos/craftcms/cms/zipball/81e712ccf8f1a9b0a65426c70769229f20dc6b26",
+            "reference": "81e712ccf8f1a9b0a65426c70769229f20dc6b26",
             "shasum": ""
         },
         "require": {
@@ -359,7 +348,7 @@
             "ext-imagick": "Adds support for more image processing formats and options.",
             "ext-intl": "Adds rich internationalization support."
         },
-        "time": "2019-02-21T23:18:32+00:00",
+        "time": "2019-02-26T20:13:43+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -525,11 +514,6 @@
         "name": "craftcms/server-check",
         "version": "1.1.7",
         "version_normalized": "1.1.7.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/craftcms/server-check.git",
-            "reference": "b379bbcdd32f2db78d204bc4d6f3f97e63fa8e04"
-        },
         "dist": {
             "type": "zip",
             "url": "https://api.github.com/repos/craftcms/server-check/zipball/b379bbcdd32f2db78d204bc4d6f3f97e63fa8e04",
@@ -1086,11 +1070,6 @@
         "name": "league/flysystem",
         "version": "1.0.50",
         "version_normalized": "1.0.50.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/thephpleague/flysystem.git",
-            "reference": "dab4e7624efa543a943be978008f439c333f2249"
-        },
         "dist": {
             "type": "zip",
             "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/dab4e7624efa543a943be978008f439c333f2249",
@@ -2182,11 +2161,6 @@
         "name": "vlucas/phpdotenv",
         "version": "v2.6.1",
         "version_normalized": "2.6.1.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/vlucas/phpdotenv.git",
-            "reference": "2a7dcf7e3e02dc5e701004e51a6f304b713107d5"
-        },
         "dist": {
             "type": "zip",
             "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/2a7dcf7e3e02dc5e701004e51a6f304b713107d5",
@@ -2291,11 +2265,6 @@
         "name": "yii2tech/ar-softdelete",
         "version": "1.0.3",
         "version_normalized": "1.0.3.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/yii2tech/ar-softdelete.git",
-            "reference": "3e29cb1865a7df66de42f6f888b99d2797a80204"
-        },
         "dist": {
             "type": "zip",
             "url": "https://api.github.com/repos/yii2tech/ar-softdelete/zipball/3e29cb1865a7df66de42f6f888b99d2797a80204",
@@ -2341,12 +2310,12 @@
     },
     {
         "name": "yiisoft/yii2",
-        "version": "2.0.16",
-        "version_normalized": "2.0.16.0",
+        "version": "2.0.16.1",
+        "version_normalized": "2.0.16.1",
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/789de9783d41e6ca10fffc3644a43a764f79b399",
-            "reference": "789de9783d41e6ca10fffc3644a43a764f79b399",
+            "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/089198cced57c4b8c9545ddc56001a1bd114b2dd",
+            "reference": "089198cced57c4b8c9545ddc56001a1bd114b2dd",
             "shasum": ""
         },
         "require": {
@@ -2362,7 +2331,7 @@
             "php": ">=5.4.0",
             "yiisoft/yii2-composer": "~2.0.4"
         },
-        "time": "2019-01-30T23:54:16+00:00",
+        "time": "2019-02-28T07:03:06+00:00",
         "bin": [
             "yii"
         ],
@@ -2439,11 +2408,6 @@
         "name": "yiisoft/yii2-bootstrap",
         "version": "2.0.9",
         "version_normalized": "2.0.9.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/yiisoft/yii2-bootstrap.git",
-            "reference": "4677951dda712dd99d5bf2a127eaee118dfea860"
-        },
         "dist": {
             "type": "zip",
             "url": "https://api.github.com/repos/yiisoft/yii2-bootstrap/zipball/4677951dda712dd99d5bf2a127eaee118dfea860",
@@ -2764,11 +2728,6 @@
         "name": "zendframework/zend-feed",
         "version": "2.11.0",
         "version_normalized": "2.11.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/zendframework/zend-feed.git",
-            "reference": "5248e9fffa760e5c36092aeff02c3797e4a8a690"
-        },
         "dist": {
             "type": "zip",
             "url": "https://api.github.com/repos/zendframework/zend-feed/zipball/5248e9fffa760e5c36092aeff02c3797e4a8a690",

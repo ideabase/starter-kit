@@ -33,15 +33,20 @@
 ```sh
 cd httpdocs
 ``` 
-- Install the required node modules
+- Install the required node modules and install grunt-cli globally if necessary
 ```sh
 npm i
+
+# only if the 'grunt' command is not working
+npm i -g grunt-cli
 ```
 - After installation, Grunt can be used with the command `grunt` in the `httpdocs/` folder to compile SCSS into CSS and minify CSS and JS files
 
 ## Post-Setup
 
 - Open your new local website in a web browser (you may need to type "http://" before the hostname)
+- In the admin control panel, enter settings > general and change the system name
+- In the admin control panel, enter settings > sites and rename the site and site group to update the `siteUrl` global variable
 - Be sure to create useful layouts that will be reusable throughout parts of your site (see the [twig documentation](https://twig.symfony.com/doc/2.x/tags/extends.html))
 
 ## Resources
