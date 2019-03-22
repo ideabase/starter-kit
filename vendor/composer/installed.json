@@ -179,22 +179,18 @@
     },
     {
         "name": "composer/semver",
-        "version": "1.4.2",
-        "version_normalized": "1.4.2.0",
+        "version": "1.5.0",
+        "version_normalized": "1.5.0.0",
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/composer/semver/zipball/c7cb9a2095a074d131b65a8a0cd294479d785573",
-            "reference": "c7cb9a2095a074d131b65a8a0cd294479d785573",
+            "url": "https://api.github.com/repos/composer/semver/zipball/46d9139568ccb8d9e7cdd4539cab7347568a5e2e",
+            "reference": "46d9139568ccb8d9e7cdd4539cab7347568a5e2e",
             "shasum": ""
         },
         "require": {
             "php": "^5.3.2 || ^7.0"
         },
-        "require-dev": {
-            "phpunit/phpunit": "^4.5 || ^5.0.5",
-            "phpunit/phpunit-mock-objects": "2.3.0 || ^3.0"
-        },
-        "time": "2016-08-30T16:08:34+00:00",
+        "time": "2019-03-19T17:25:45+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -207,7 +203,6 @@
                 "Composer\\Semver\\": "src"
             }
         },
-        "notification-url": "https://packagist.org/downloads/",
         "license": [
             "MIT"
         ],
@@ -291,12 +286,12 @@
     },
     {
         "name": "craftcms/cms",
-        "version": "3.1.15",
-        "version_normalized": "3.1.15.0",
+        "version": "3.1.19",
+        "version_normalized": "3.1.19.0",
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/craftcms/cms/zipball/81e712ccf8f1a9b0a65426c70769229f20dc6b26",
-            "reference": "81e712ccf8f1a9b0a65426c70769229f20dc6b26",
+            "url": "https://api.github.com/repos/craftcms/cms/zipball/dde6eabb1f11e93fe06b7f6a2e9298b490a87f3d",
+            "reference": "dde6eabb1f11e93fe06b7f6a2e9298b490a87f3d",
             "shasum": ""
         },
         "require": {
@@ -325,9 +320,9 @@
             "seld/cli-prompt": "^1.0.3",
             "symfony/yaml": "^3.2|^4.0",
             "true/punycode": "^2.1.0",
-            "twig/twig": "^2.5.0",
+            "twig/twig": "^2.7.2",
             "yii2tech/ar-softdelete": "^1.0.2",
-            "yiisoft/yii2": "~2.0.16.0",
+            "yiisoft/yii2": "~2.0.16.1",
             "yiisoft/yii2-debug": "^2.0.10",
             "yiisoft/yii2-queue": "2.1.0",
             "yiisoft/yii2-swiftmailer": "^2.1.0",
@@ -348,7 +343,7 @@
             "ext-imagick": "Adds support for more image processing formats and options.",
             "ext-intl": "Adds rich internationalization support."
         },
-        "time": "2019-02-26T20:13:43+00:00",
+        "time": "2019-03-19T18:24:57+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -371,7 +366,7 @@
             "issues": "https://github.com/craftcms/cms/issues?state=open",
             "forum": "https://craftcms.stackexchange.com/",
             "source": "https://github.com/craftcms/cms",
-            "docs": "https://github.com/craftcms/docs",
+            "docs": "https://docs.craftcms.com/v3/",
             "rss": "https://github.com/craftcms/cms/releases.atom"
         }
     },
@@ -1587,27 +1582,30 @@
     },
     {
         "name": "swiftmailer/swiftmailer",
-        "version": "v6.1.3",
-        "version_normalized": "6.1.3.0",
+        "version": "v6.2.0",
+        "version_normalized": "6.2.0.0",
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/swiftmailer/swiftmailer/zipball/8ddcb66ac10c392d3beb54829eef8ac1438595f4",
-            "reference": "8ddcb66ac10c392d3beb54829eef8ac1438595f4",
+            "url": "https://api.github.com/repos/swiftmailer/swiftmailer/zipball/6fa3232ff9d3f8237c0fae4b7ff05e1baa4cd707",
+            "reference": "6fa3232ff9d3f8237c0fae4b7ff05e1baa4cd707",
             "shasum": ""
         },
         "require": {
             "egulias/email-validator": "~2.0",
-            "php": ">=7.0.0"
+            "php": ">=7.0.0",
+            "symfony/polyfill-iconv": "^1.0",
+            "symfony/polyfill-intl-idn": "^1.10",
+            "symfony/polyfill-mbstring": "^1.0"
         },
         "suggest": {
             "ext-intl": "Needed to support internationalized email addresses",
             "true/punycode": "Needed to support internationalized email addresses, if ext-intl is not installed"
         },
-        "time": "2018-09-11T07:12:52+00:00",
+        "time": "2019-03-10T07:52:41+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "6.1-dev"
+                "dev-master": "6.2-dev"
             }
         },
         "installation-source": "dist",
@@ -1902,6 +1900,119 @@
         ]
     },
     {
+        "name": "symfony/polyfill-iconv",
+        "version": "v1.10.0",
+        "version_normalized": "1.10.0.0",
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/polyfill-iconv/zipball/97001cfc283484c9691769f51cdf25259037eba2",
+            "reference": "97001cfc283484c9691769f51cdf25259037eba2",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3"
+        },
+        "suggest": {
+            "ext-iconv": "For best performance"
+        },
+        "time": "2018-09-21T06:26:08+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.9-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Symfony\\Polyfill\\Iconv\\": ""
+            },
+            "files": [
+                "bootstrap.php"
+            ]
+        },
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Nicolas Grekas",
+                "email": "p@tchwork.com"
+            },
+            {
+                "name": "Symfony Community",
+                "homepage": "https://symfony.com/contributors"
+            }
+        ],
+        "description": "Symfony polyfill for the Iconv extension",
+        "homepage": "https://symfony.com",
+        "keywords": [
+            "compatibility",
+            "iconv",
+            "polyfill",
+            "portable",
+            "shim"
+        ]
+    },
+    {
+        "name": "symfony/polyfill-intl-idn",
+        "version": "v1.10.0",
+        "version_normalized": "1.10.0.0",
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/polyfill-intl-idn/zipball/89de1d44f2c059b266f22c9cc9124ddc4cd0987a",
+            "reference": "89de1d44f2c059b266f22c9cc9124ddc4cd0987a",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3",
+            "symfony/polyfill-mbstring": "^1.3",
+            "symfony/polyfill-php72": "^1.9"
+        },
+        "suggest": {
+            "ext-intl": "For best performance"
+        },
+        "time": "2018-09-30T16:36:12+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.9-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Symfony\\Polyfill\\Intl\\Idn\\": ""
+            },
+            "files": [
+                "bootstrap.php"
+            ]
+        },
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Symfony Community",
+                "homepage": "https://symfony.com/contributors"
+            },
+            {
+                "name": "Laurent Bassin",
+                "email": "laurent@bassin.info"
+            }
+        ],
+        "description": "Symfony polyfill for intl's idn_to_ascii and idn_to_utf8 functions",
+        "homepage": "https://symfony.com",
+        "keywords": [
+            "compatibility",
+            "idn",
+            "intl",
+            "polyfill",
+            "portable",
+            "shim"
+        ]
+    },
+    {
         "name": "symfony/polyfill-mbstring",
         "version": "v1.10.0",
         "version_normalized": "1.10.0.0",
@@ -1951,6 +2062,57 @@
         "keywords": [
             "compatibility",
             "mbstring",
+            "polyfill",
+            "portable",
+            "shim"
+        ]
+    },
+    {
+        "name": "symfony/polyfill-php72",
+        "version": "v1.10.0",
+        "version_normalized": "1.10.0.0",
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/polyfill-php72/zipball/9050816e2ca34a8e916c3a0ae8b9c2fccf68b631",
+            "reference": "9050816e2ca34a8e916c3a0ae8b9c2fccf68b631",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3"
+        },
+        "time": "2018-09-21T13:07:52+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.9-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Symfony\\Polyfill\\Php72\\": ""
+            },
+            "files": [
+                "bootstrap.php"
+            ]
+        },
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Nicolas Grekas",
+                "email": "p@tchwork.com"
+            },
+            {
+                "name": "Symfony Community",
+                "homepage": "https://symfony.com/contributors"
+            }
+        ],
+        "description": "Symfony polyfill backporting some PHP 7.2+ features to lower PHP versions",
+        "homepage": "https://symfony.com",
+        "keywords": [
+            "compatibility",
             "polyfill",
             "portable",
             "shim"
@@ -2095,12 +2257,12 @@
     },
     {
         "name": "twig/twig",
-        "version": "v2.6.2",
-        "version_normalized": "2.6.2.0",
+        "version": "v2.7.3",
+        "version_normalized": "2.7.3.0",
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/twigphp/Twig/zipball/7d7342c8a4059fefb9b8d07db0cc14007021f9b7",
-            "reference": "7d7342c8a4059fefb9b8d07db0cc14007021f9b7",
+            "url": "https://api.github.com/repos/twigphp/Twig/zipball/52b9a5bd41c8c53a1d784f90ca25e33bf558a6b3",
+            "reference": "52b9a5bd41c8c53a1d784f90ca25e33bf558a6b3",
             "shasum": ""
         },
         "require": {
@@ -2108,16 +2270,11 @@
             "symfony/polyfill-ctype": "^1.8",
             "symfony/polyfill-mbstring": "^1.3"
         },
-        "require-dev": {
-            "psr/container": "^1.0",
-            "symfony/debug": "^2.7",
-            "symfony/phpunit-bridge": "^3.4.19|^4.1.8"
-        },
-        "time": "2019-01-14T15:00:48+00:00",
+        "time": "2019-03-21T14:53:02+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "2.6-dev"
+                "dev-master": "2.7-dev"
             }
         },
         "installation-source": "dist",
@@ -2129,7 +2286,6 @@
                 "Twig\\": "src/"
             }
         },
-        "notification-url": "https://packagist.org/downloads/",
         "license": [
             "BSD-3-Clause"
         ],
@@ -2405,63 +2561,6 @@
         ]
     },
     {
-        "name": "yiisoft/yii2-bootstrap",
-        "version": "2.0.9",
-        "version_normalized": "2.0.9.0",
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/yiisoft/yii2-bootstrap/zipball/4677951dda712dd99d5bf2a127eaee118dfea860",
-            "reference": "4677951dda712dd99d5bf2a127eaee118dfea860",
-            "shasum": ""
-        },
-        "require": {
-            "bower-asset/bootstrap": "3.4.* | 3.3.* | 3.2.* | 3.1.*",
-            "yiisoft/yii2": "~2.0.6"
-        },
-        "time": "2019-01-29T21:39:45+00:00",
-        "type": "yii2-extension",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.0.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "yii\\bootstrap\\": "src"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "BSD-3-Clause"
-        ],
-        "authors": [
-            {
-                "name": "Paul Klimov",
-                "email": "klimov.paul@gmail.com"
-            },
-            {
-                "name": "Alexander Makarov",
-                "email": "sam@rmcreative.ru",
-                "homepage": "http://rmcreative.ru/"
-            },
-            {
-                "name": "Antonio Ramirez",
-                "email": "amigo.cobos@gmail.com"
-            },
-            {
-                "name": "Qiang Xue",
-                "email": "qiang.xue@gmail.com",
-                "homepage": "http://www.yiiframework.com/"
-            }
-        ],
-        "description": "The Twitter Bootstrap extension for the Yii framework",
-        "keywords": [
-            "bootstrap",
-            "yii2"
-        ]
-    },
-    {
         "name": "yiisoft/yii2-composer",
         "version": "2.0.7",
         "version_normalized": "2.0.7.0",
@@ -2514,19 +2613,20 @@
     },
     {
         "name": "yiisoft/yii2-debug",
-        "version": "2.0.14",
-        "version_normalized": "2.0.14.0",
+        "version": "2.1.0",
+        "version_normalized": "2.1.0.0",
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/yiisoft/yii2-debug/zipball/dc5a4a8529de1a41dbb037dbabf1f3f93002f21d",
-            "reference": "dc5a4a8529de1a41dbb037dbabf1f3f93002f21d",
+            "url": "https://api.github.com/repos/yiisoft/yii2-debug/zipball/426bafcdb0328de66202ae53da1fbe24660d010f",
+            "reference": "426bafcdb0328de66202ae53da1fbe24660d010f",
             "shasum": ""
         },
         "require": {
-            "yiisoft/yii2": "~2.0.13",
-            "yiisoft/yii2-bootstrap": "~2.0.0"
+            "ext-mbstring": "*",
+            "php": ">=5.4",
+            "yiisoft/yii2": "~2.0.13"
         },
-        "time": "2018-09-23T21:41:04+00:00",
+        "time": "2019-03-17T17:47:00+00:00",
         "type": "yii2-extension",
         "extra": {
             "branch-alias": {
@@ -2546,6 +2646,10 @@
             {
                 "name": "Qiang Xue",
                 "email": "qiang.xue@gmail.com"
+            },
+            {
+                "name": "Simon Karlen",
+                "email": "simi.albi@outlook.com"
             }
         ],
         "description": "The debugger extension for the Yii framework",
@@ -2726,12 +2830,12 @@
     },
     {
         "name": "zendframework/zend-feed",
-        "version": "2.11.0",
-        "version_normalized": "2.11.0.0",
+        "version": "2.12.0",
+        "version_normalized": "2.12.0.0",
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/zendframework/zend-feed/zipball/5248e9fffa760e5c36092aeff02c3797e4a8a690",
-            "reference": "5248e9fffa760e5c36092aeff02c3797e4a8a690",
+            "url": "https://api.github.com/repos/zendframework/zend-feed/zipball/d926c5af34b93a0121d5e2641af34ddb1533d733",
+            "reference": "d926c5af34b93a0121d5e2641af34ddb1533d733",
             "shasum": ""
         },
         "require": {
@@ -2741,16 +2845,6 @@
             "zendframework/zend-escaper": "^2.5.2",
             "zendframework/zend-stdlib": "^3.2.1"
         },
-        "require-dev": {
-            "phpunit/phpunit": "^5.7.23 || ^6.4.3",
-            "psr/http-message": "^1.0.1",
-            "zendframework/zend-cache": "^2.7.2",
-            "zendframework/zend-coding-standard": "~1.0.0",
-            "zendframework/zend-db": "^2.8.2",
-            "zendframework/zend-http": "^2.7",
-            "zendframework/zend-servicemanager": "^2.7.8 || ^3.3",
-            "zendframework/zend-validator": "^2.10.1"
-        },
         "suggest": {
             "psr/http-message": "PSR-7 ^1.0.1, if you wish to use Zend\\Feed\\Reader\\Http\\Psr7ResponseDecorator",
             "zendframework/zend-cache": "Zend\\Cache component, for optionally caching feeds between requests",
@@ -2759,12 +2853,12 @@
             "zendframework/zend-servicemanager": "Zend\\ServiceManager component, for easily extending ExtensionManager implementations",
             "zendframework/zend-validator": "Zend\\Validator component, for validating email addresses used in Atom feeds and entries when using the Writer subcomponent"
         },
-        "time": "2019-01-29T21:37:15+00:00",
+        "time": "2019-03-05T20:08:49+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "2.11.x-dev",
-                "dev-develop": "2.12.x-dev"
+                "dev-master": "2.12.x-dev",
+                "dev-develop": "2.13.x-dev"
             }
         },
         "installation-source": "dist",
@@ -2773,7 +2867,6 @@
                 "Zend\\Feed\\": "src/"
             }
         },
-        "notification-url": "https://packagist.org/downloads/",
         "license": [
             "BSD-3-Clause"
         ],

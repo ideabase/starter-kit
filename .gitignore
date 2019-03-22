@@ -1,6 +1,5 @@
 httpdocs/assets/img/uploads/
 !httpdocs/assets/img/uploads/logo.png
-httpdocs/package-lock.json
 storage/backups/
 storage/logs/
 storage/runtime/
