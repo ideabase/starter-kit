@@ -36,6 +36,7 @@ cd httpdocs
 - Install the required node modules and install grunt-cli globally if necessary
 ```sh
 npm i
+npm i -g sass
 
 # only if the 'grunt' command is not working
 npm i -g grunt-cli
