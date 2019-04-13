@@ -40,10 +40,6 @@ class ComposerStaticInit531abb82119048e37a570d64920e2432
             'yii\\' => 4,
             'yii2tech\\ar\\softdelete\\' => 23,
         ),
-        'w' => 
-        array (
-            'wbrowar\\adminbar\\' => 17,
-        ),
         'm' => 
         array (
             'modules\\' => 8,
@@ -189,10 +185,6 @@ class ComposerStaticInit531abb82119048e37a570d64920e2432
         'yii2tech\\ar\\softdelete\\' => 
         array (
             0 => __DIR__ . '/..' . '/yii2tech/ar-softdelete/src',
-        ),
-        'wbrowar\\adminbar\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/wbrowar/adminbar/src',
         ),
         'modules\\' => 
         array (
@@ -2007,6 +1999,7 @@ class ComposerStaticInit531abb82119048e37a570d64920e2432
         'craft\\console\\Request' => __DIR__ . '/..' . '/craftcms/cms/src/console/Request.php',
         'craft\\console\\User' => __DIR__ . '/..' . '/craftcms/cms/src/console/User.php',
         'craft\\console\\actions\\ClearCacheAction' => __DIR__ . '/..' . '/craftcms/cms/src/console/actions/ClearCacheAction.php',
+        'craft\\console\\controllers\\BackupController' => __DIR__ . '/..' . '/craftcms/cms/src/console/controllers/BackupController.php',
         'craft\\console\\controllers\\ClearCachesController' => __DIR__ . '/..' . '/craftcms/cms/src/console/controllers/ClearCachesController.php',
         'craft\\console\\controllers\\GcController' => __DIR__ . '/..' . '/craftcms/cms/src/console/controllers/GcController.php',
         'craft\\console\\controllers\\IndexAssetsController' => __DIR__ . '/..' . '/craftcms/cms/src/console/controllers/IndexAssetsController.php',
@@ -2453,6 +2446,7 @@ class ComposerStaticInit531abb82119048e37a570d64920e2432
         'craft\\migrations\\m190205_140000_fix_asset_soft_delete_index' => __DIR__ . '/..' . '/craftcms/cms/src/migrations/m190205_140000_fix_asset_soft_delete_index.php',
         'craft\\migrations\\m190208_140000_reset_project_config_mapping' => __DIR__ . '/..' . '/craftcms/cms/src/migrations/m190208_140000_reset_project_config_mapping.php',
         'craft\\migrations\\m190218_143000_element_index_settings_uid' => __DIR__ . '/..' . '/craftcms/cms/src/migrations/m190218_143000_element_index_settings_uid.php',
+        'craft\\migrations\\m190401_223843_drop_old_indexes' => __DIR__ . '/..' . '/craftcms/cms/src/migrations/m190401_223843_drop_old_indexes.php',
         'craft\\models\\AssetIndexData' => __DIR__ . '/..' . '/craftcms/cms/src/models/AssetIndexData.php',
         'craft\\models\\AssetTransform' => __DIR__ . '/..' . '/craftcms/cms/src/models/AssetTransform.php',
         'craft\\models\\AssetTransformIndex' => __DIR__ . '/..' . '/craftcms/cms/src/models/AssetTransformIndex.php',
@@ -2780,15 +2774,6 @@ class ComposerStaticInit531abb82119048e37a570d64920e2432
         'enshrined\\svgSanitize\\data\\TagInterface' => __DIR__ . '/..' . '/enshrined/svg-sanitize/src/data/TagInterface.php',
         'mikehaertl\\shellcommand\\Command' => __DIR__ . '/..' . '/mikehaertl/php-shellcommand/src/Command.php',
         'modules\\Module' => __DIR__ . '/../..' . '/modules/Module.php',
-        'wbrowar\\adminbar\\AdminBar' => __DIR__ . '/..' . '/wbrowar/adminbar/src/AdminBar.php',
-        'wbrowar\\adminbar\\assetbundles\\AdminBar\\AdminBarAsset' => __DIR__ . '/..' . '/wbrowar/adminbar/src/assetbundles/adminbar/AdminBarAsset.php',
-        'wbrowar\\adminbar\\console\\controllers\\DefaultController' => __DIR__ . '/..' . '/wbrowar/adminbar/src/console/controllers/DefaultController.php',
-        'wbrowar\\adminbar\\controllers\\BarController' => __DIR__ . '/..' . '/wbrowar/adminbar/src/controllers/BarController.php',
-        'wbrowar\\adminbar\\events\\AdminBarRenderEvent' => __DIR__ . '/..' . '/wbrowar/adminbar/src/events/AdminBarRenderEvent.php',
-        'wbrowar\\adminbar\\models\\Settings' => __DIR__ . '/..' . '/wbrowar/adminbar/src/models/Settings.php',
-        'wbrowar\\adminbar\\services\\Bar' => __DIR__ . '/..' . '/wbrowar/adminbar/src/services/Bar.php',
-        'wbrowar\\adminbar\\services\\EditLinks' => __DIR__ . '/..' . '/wbrowar/adminbar/src/services/EditLinks.php',
-        'wbrowar\\adminbar\\twigextensions\\AdminBarTwigExtension' => __DIR__ . '/..' . '/wbrowar/adminbar/src/twigextensions/AdminBarTwigExtension.php',
         'yii2tech\\ar\\softdelete\\SoftDeleteBehavior' => __DIR__ . '/..' . '/yii2tech/ar-softdelete/src/SoftDeleteBehavior.php',
         'yii2tech\\ar\\softdelete\\SoftDeleteQueryBehavior' => __DIR__ . '/..' . '/yii2tech/ar-softdelete/src/SoftDeleteQueryBehavior.php',
         'yii\\BaseYii' => __DIR__ . '/..' . '/yiisoft/yii2/BaseYii.php',

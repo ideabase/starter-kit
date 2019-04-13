@@ -398,7 +398,6 @@ class Matrix extends Field implements EagerLoadingFieldInterface
         // Set the initially matched elements if $value is already set, which is the case if there was a validation
         // error or we're loading an entry revision.
         if (is_array($value) || $value === '') {
-            $query->anyStatus();
             $query->setCachedResult($this->_createBlocksFromSerializedData($value, $element));
         }
 
@@ -488,10 +487,7 @@ class Matrix extends Field implements EagerLoadingFieldInterface
         }
 
         if ($value instanceof MatrixBlockQuery) {
-            $value = $value
-                ->limit(null)
-                ->anyStatus()
-                ->all();
+            $value = $value->getCachedResult() ?? $value->limit(null)->anyStatus()->all();
         }
 
         // Safe to set the default blocks?

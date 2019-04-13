@@ -1,5 +1,55 @@
 # Release Notes for Craft CMS 3.x
 
+## 3.1.22 - 2019-04-10
+
+### Added
+- Added `craft\base\ElementTrait::$resaving`, which indicates whether the element is currently being resaved via a `ResaveElements` job or a `resave` command. ([#3482](https://github.com/craftcms/cms/issues/3482))
+- Added `craft\db\Paginator::setPageResults()`. ([#4120](https://github.com/craftcms/cms/issues/4120))
+
+### Changed
+- Changed the way Craft updates search indexes, to reduce the likelihood of a deadlock. ([#3197](https://github.com/craftcms/cms/issues/3197))
+- Improved styles and behavior of the Plugin Store.
+- The Settings → Plugins page now notes which plugins are expired, with links to renew them on [id.craftcms.com](https://id.craftcms.com).
+- Improved the styling of info HUDs that contain long text or tables. ([#4107](https://github.com/craftcms/cms/pull/4107))
+
+### Fixed
+- Fixed a PHP error that could occur during asset indexing in some cases.
+- Fixed a bug where entry drafts weren’t showing previous changes to Matrix fields on the draft. ([#4105](https://github.com/craftcms/cms/issues/4105))
+- Fixed a bug where `project.yaml` changes weren’t always getting picked up. ([#4028](https://github.com/craftcms/cms/issues/4028))
+- Fixed a bug where the `project-config/rebuild` command would restore soft-deleted components. ([#4100](https://github.com/craftcms/cms/issues/4100))
+- Fixed a bug where the `project-config/sync` command was not performing schema checks.
+- Fixed an error that occurred when backing up the database if the database password contained a `$` character. ([#4115](https://github.com/craftcms/cms/issues/4115))
+
+## 3.1.21.1 - 2019-04-04
+
+### Fixed
+- Fixed a bug where underscores were getting stripped from element slugs. ([#4096](https://github.com/craftcms/cms/issues/4096))
+
+## 3.1.21 - 2019-04-03
+
+### Added
+- Added the `backup` command, which creates a new database backup. ([#4075](https://github.com/craftcms/cms/issues/4075))
+- Added the `queue/retry` command, which can be passed a failed job ID, or `all` to retry all failed jobs. ([#4072](https://github.com/craftcms/cms/issues/4072))
+- Added `craft\queue\Queue::retryAll()`.
+- Added `craft\services\sections::$autoResaveEntries`, which can be set to `false` from `config/app.php` to prevent Craft from auto-resaving entries after sections and entry types are updated. ([#3482](https://github.com/craftcms/cms/issues/3482))
+
+### Changed
+- It’s now possible to double-click on asset sources to expand/collapse their subfolders. ([#4070](https://github.com/craftcms/cms/issues/4070))
+- Craft no longer auto-resaves entries after saving a section or entry type if nothing changed of any significance to entries. ([#3482](https://github.com/craftcms/cms/issues/3482))
+- Craft now formats filesizes using metric units (e.g. MB instead of MiB).
+- The updater is now capable of handling package name changes.
+- Craft now requires Yii 2.0.17.
+
+### Fixed
+- Fixed a bug where the Asset Indexes utility wasn’t logging exceptions.
+- Fixed a SQL error that could occur when using the Asset Indexes utility, if any filenames contained 4+ byte characters.
+- Fixed a bug where entry queries could return duplicate results for any entries that belong to a section that has soft-deleted structures associated with it. ([#4066](https://github.com/craftcms/cms/issues/4066))
+- Fixed a bug where rebuilding project config would not work with Matrix fields with no block types. ([#4074](https://github.com/craftcms/cms/issues/4074)
+- Fixed an error that occurred when sending emails if the `testToEmailAddress` config setting was set. ([#4076](https://github.com/craftcms/cms/issues/4076))
+- Fixed a bug where it wasn’t possible to pass the `--element-id` option on `resave/*` commands.
+- Fixed a bug where Matrix fields were including disabled blocks if any changes had been made to the Matrix block query params.
+- Fixed SQL errors that could occur if the table prefix had ever changed.
+
 ## 3.1.20.1 - 2019-03-27
 
 ### Fixed

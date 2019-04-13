@@ -10,7 +10,7 @@ module.exports = function(grunt) {
           style: 'compressed'
         },
         files: {
-        'assets/css/style.css': 'assets/sass/style.scss'
+        'assets/css/style.css': 'assets/_sass/style.scss'
         }
       }
     },
@@ -48,7 +48,7 @@ module.exports = function(grunt) {
     },
     watch: {
       css: {
-				files: '**/sass/*.scss',
+				files: '**/*.scss',
 				tasks: ['sass', 'autoprefixer'],
         options: {
           livereload: true,
