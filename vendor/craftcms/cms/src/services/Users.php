@@ -361,7 +361,7 @@ class Users extends Component
     /**
      * Sends a password reset email to a user.
      *
-     * A new verification code will generated for the user overwriting any existing one.
+     * A new verification code be will generated for the user, overwriting any existing one.
      *
      * @param User $user The user to send the forgot password email to.
      * @return bool Whether the email was sent successfully.
@@ -485,8 +485,6 @@ class Users extends Component
         $userRecord->lastLoginDate = $now;
         $userRecord->invalidLoginWindowStart = null;
         $userRecord->invalidLoginCount = null;
-        $userRecord->verificationCode = null;
-        $userRecord->verificationCodeIssuedDate = null;
 
         if (Craft::$app->getConfig()->getGeneral()->storeUserIps) {
             $userRecord->lastLoginAttemptIp = Craft::$app->getRequest()->getUserIP();
@@ -982,9 +980,15 @@ class Users extends Component
     public function assignUserToDefaultGroup(User $user): bool
     {
         // Make sure there's a default group
-        $defaultGroupId = Craft::$app->getProjectConfig()->get('users.defaultGroup');
+        $uid = Craft::$app->getProjectConfig()->get('users.defaultGroup');
 
-        if (!$defaultGroupId) {
+        if (!$uid) {
+            return false;
+        }
+
+        $group = Craft::$app->getUserGroups()->getGroupByUid($uid);
+
+        if (!$group) {
             return false;
         }
 
@@ -998,7 +1002,7 @@ class Users extends Component
             return false;
         }
 
-        if (!$this->assignUserToGroups($user->id, [$defaultGroupId])) {
+        if (!$this->assignUserToGroups($user->id, [$group->id])) {
             return false;
         }
 
