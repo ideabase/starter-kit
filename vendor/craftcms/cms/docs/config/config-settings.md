@@ -809,7 +809,7 @@ Defined by
 
 
 Whether to use a cookie to persist the CSRF token if [enableCsrfProtection](https://docs.craftcms.com/api/v3/craft-config-generalconfig.html#enablecsrfprotection) is enabled. If false, the CSRF token
-will be stored in session under the 'csrfTokenName' config setting name. Note that while storing CSRF tokens in
+will be stored in session under the `csrfTokenName` config setting name. Note that while storing CSRF tokens in
 session increases security, it requires starting a session for every page that a CSRF token is need, which may
 degrade site performance.
 
@@ -1243,6 +1243,28 @@ locked.
 
 
 
+### `maxRevisions`
+
+Allowed types
+
+:   [integer](http://php.net/language.types.integer), [null](http://php.net/language.types.null)
+
+Default value
+
+:   `50`
+
+Defined by
+
+:   [GeneralConfig::$maxRevisions](api:craft\config\GeneralConfig::$maxRevisions)
+
+
+
+The maximum number of revisions that should be stored for each element.
+
+Set to `0` if you want to store an unlimited number of revisions.
+
+
+
 ### `maxSlugIncrement`
 
 Allowed types
@@ -1652,6 +1674,30 @@ See [craft\helpers\ConfigHelper::durationInSeconds()](https://docs.craftcms.com/
 
 
 
+### `purgeUnsavedDraftsDuration`
+
+Allowed types
+
+:   `mixed`
+
+Default value
+
+:   `2592000`
+
+Defined by
+
+:   [GeneralConfig::$purgeUnsavedDraftsDuration](api:craft\config\GeneralConfig::$purgeUnsavedDraftsDuration)
+
+
+
+The amount of time to wait before Craft purges drafts of new elements that were never formally saved.
+
+Set to `0` to disable this feature.
+
+See [craft\helpers\ConfigHelper::durationInSeconds()](https://docs.craftcms.com/api/v3/craft-helpers-confighelper.html#method-durationinseconds) for a list of supported value types.
+
+
+
 ### `rememberUsernameDuration`
 
 Allowed types
@@ -1863,6 +1909,36 @@ Here is an example of how you would setup a queue runner from a cron job that ra
 ```text
 /1 * * * * /path/to/project/root/craft queue/run
 ```
+
+
+
+### `sameSiteCookieValue`
+
+Allowed types
+
+:   [string](http://php.net/language.types.string)
+
+Default value
+
+:   `null`
+
+Defined by
+
+:   [GeneralConfig::$sameSiteCookieValue](api:craft\config\GeneralConfig::$sameSiteCookieValue)
+
+Since
+
+:   3.1.33
+
+
+
+The [SameSite](https://www.owasp.org/index.php/SameSite) value that should be set on Craft cookies, if any.
+
+This can be set to `'Lax'`, `'Strict'`, or `null`.
+
+::: note
+This setting requires PHP 7.3 or later.
+:::
 
 
 

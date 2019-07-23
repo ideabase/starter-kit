@@ -28,7 +28,7 @@ As a convenience, you can extend <api:craft\base\Element>, which provides a base
 
 Create an `elements/` directory within your plugin’s source directory, and create a PHP class file within it, named after the class name you want to give your element type (e.g. `Product.php`).
 
-Define the class within the file, and give it some public properties for any custom attributes your elements will have.
+Define the class within the file, and give a display name and some public properties for any custom attributes your elements will have.
 
 ```php
 <?php
@@ -38,6 +38,22 @@ use craft\base\Element;
 
 class Product extends Element
 {
+    /**
+     * @inheritdoc
+     */
+    public static function displayName(): string
+    {
+        return 'Product';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function pluralDisplayName(): string
+    {
+        return 'Products';
+    }
+
     /**
      * @var int Price
      */
@@ -373,7 +389,7 @@ Elements that support multiple sites will have their `afterSave()` method called
 
 ## Statuses
 
-If your elements should have their own statuses, give your element class a static `hasStatuses()` method:
+If your elements should have their own statuses, give your element class a static <api:craft\base\ElementInterface::hasStatuses()> method:
 
 ```php
 public static function hasStatuses(): bool
@@ -382,15 +398,47 @@ public static function hasStatuses(): bool
 }
 ```
 
-Then, if they can have any statuses besides `enabled` and `disabled`, add a static `statuses()` method to define them:
+### Custom Statuses
+
+By default your elements will support two statuses: Enabled and Disabled. If you’d like to give your element type its own custom statuses, first define what they are by overriding its static <api:craft\base\ElementInterface::statuses()> method:
 
 ```php
 public static function statuses(): array
 {
     return [
-        'foo' => \Craft::t('plugin-handle', 'Foo'),
-        'bar' => \Craft::t('plugin-handle', 'Bar'),
+        'foo' => ['label' => \Craft::t('plugin-handle', 'Foo'), 'color' => '27AE60'],
+        'bar' => ['label' => \Craft::t('plugin-handle', 'Bar'), 'color' => 'F2842D'],
     ];
+}
+```
+
+Next add a <api:craft\base\ElementInterface::getStatus()> method that returns the current status of an element:
+
+```php
+public function getStatus()
+{
+    if ($this->fooIsTrue) {
+        return 'foo';
+    }
+
+    return 'bar';
+}
+```
+
+Finally, override the <api:craft\elements\db\ElementQuery::statusCondition()> method on your [element query class](#element-query-class):
+
+```php
+protected function statusCondition(string $status)
+{
+    switch ($status) {
+        case 'foo':
+            return ['foo' => true];
+        case 'bar':
+            return ['bar' => true];
+        default:
+            // call the base method for `enabled` or `disabled`
+            return parent::statusCondition($status);
+    }
 }
 ```
 
@@ -493,7 +541,7 @@ protected static function defineTableAttributes(): array
 ```
 
 ::: tip
-The first attribute you list here is a special case. It defines the header for the first column in the table view, which is the only one admins can’t remove. Its values will be the element string representations (whatever their `__toString()` methods return).
+The first attribute you list here is a special case. It defines the header for the first column in the table view, which is the only one admins can’t remove. Its values will come from your elements’ <api:craft\base\ElementInterface::getUiLabel()> method.
 :::
 
 If it’s a big list, you can also limit which columns should be visible by default for new [sources](#sources) by adding a protected `defineDefaultTableAttributes()` method to your element class:

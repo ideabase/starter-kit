@@ -37,6 +37,7 @@ use yii\base\Exception;
 use yii\base\InvalidArgumentException;
 use yii\base\NotSupportedException;
 use yii\validators\InlineValidator;
+use yii\validators\Validator;
 use yii\web\IdentityInterface;
 
 /**
@@ -111,6 +112,14 @@ class User extends Element implements IdentityInterface
     /**
      * @inheritdoc
      */
+    public static function pluralDisplayName(): string
+    {
+        return Craft::t('app', 'Users');
+    }
+
+    /**
+     * @inheritdoc
+     */
     public static function refHandle()
     {
         return 'user';
@@ -163,7 +172,6 @@ class User extends Element implements IdentityInterface
             [
                 'key' => '*',
                 'label' => Craft::t('app', 'All users'),
-                'criteria' => ['status' => null],
                 'hasThumbs' => true
             ]
         ];
@@ -306,6 +314,7 @@ class User extends Element implements IdentityInterface
         }
 
         $attributes['id'] = ['label' => Craft::t('app', 'ID')];
+        $attributes['uid'] = ['label' => Craft::t('app', 'UID')];
         $attributes['lastLoginDate'] = ['label' => Craft::t('app', 'Last Login')];
         $attributes['dateCreated'] = ['label' => Craft::t('app', 'Date Created')];
         $attributes['dateUpdated'] = ['label' => Craft::t('app', 'Date Updated')];
@@ -639,6 +648,7 @@ class User extends Element implements IdentityInterface
         $rules = parent::rules();
         $rules[] = [['lastLoginDate', 'lastInvalidLoginDate', 'lockoutDate', 'lastPasswordChangeDate', 'verificationCodeIssuedDate'], DateTimeValidator::class];
         $rules[] = [['invalidLoginCount', 'photoId'], 'number', 'integerOnly' => true];
+        $rules[] = [['username', 'email', 'unverifiedEmail', 'firstName', 'lastName'], 'trim', 'skipOnEmpty' => true];
         $rules[] = [['email', 'unverifiedEmail'], 'email'];
         $rules[] = [['email', 'password', 'unverifiedEmail'], 'string', 'max' => 255];
         $rules[] = [['username', 'firstName', 'lastName', 'verificationCode'], 'string', 'max' => 100];
@@ -676,7 +686,7 @@ class User extends Element implements IdentityInterface
         ];
 
         $rules[] = [
-            ['firstName', 'lastName'], function($attribute, $params, $validator) {
+            ['firstName', 'lastName'], function($attribute, $params, Validator $validator) {
                 if (strpos($this->$attribute, '://') !== false) {
                     $validator->addError($this, $attribute, Craft::t('app', 'Invalid value “{value}”.'));
                 }
@@ -1284,7 +1294,7 @@ class User extends Element implements IdentityInterface
             }
         } else {
             $record = new UserRecord();
-            $record->id = $this->id;
+            $record->id = (int)$this->id;
             $record->locked = $this->locked;
             $record->suspended = $this->suspended;
             $record->pending = $this->pending;
@@ -1293,7 +1303,7 @@ class User extends Element implements IdentityInterface
         $record->username = $this->username;
         $record->firstName = $this->firstName;
         $record->lastName = $this->lastName;
-        $record->photoId = $this->photoId;
+        $record->photoId = (int)$this->photoId ?: null;
         $record->email = $this->email;
         $record->admin = $this->admin;
         $record->passwordResetRequired = $this->passwordResetRequired;
@@ -1365,8 +1375,8 @@ class User extends Element implements IdentityInterface
                 // Update the entry/version/draft tables to point to the new user
                 $userRefs = [
                     Table::ENTRIES => 'authorId',
-                    Table::ENTRYDRAFTS => 'creatorId',
-                    Table::ENTRYVERSIONS => 'creatorId',
+                    Table::DRAFTS => 'creatorId',
+                    Table::REVISIONS => 'creatorId',
                 ];
 
                 foreach ($userRefs as $table => $column) {
@@ -1410,22 +1420,6 @@ class User extends Element implements IdentityInterface
 
     // Private Methods
     // =========================================================================
-
-    /**
-     * Saves a new session record for the user.
-     *
-     * @param string $sessionToken
-     * @return string The new session row's UID.
-     */
-    private function _storeSessionToken(string $sessionToken): string
-    {
-        $sessionRecord = new SessionRecord();
-        $sessionRecord->userId = $this->id;
-        $sessionRecord->token = $sessionToken;
-        $sessionRecord->save();
-
-        return $sessionRecord->uid;
-    }
 
     /**
      * Validates a cookie's stored user agent against the current request's user agent string,

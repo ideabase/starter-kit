@@ -8,9 +8,6 @@
 namespace craft\controllers;
 
 use Craft;
-use craft\base\Element;
-use craft\base\ElementInterface;
-use craft\base\Field;
 use craft\base\UtilityInterface;
 use craft\db\Query;
 use craft\db\Table;
@@ -185,7 +182,6 @@ class UtilitiesController extends Controller
 
             $missingFolders = [];
             $skippedFiles = [];
-            $grandTotal = 0;
 
             foreach ($volumeIds as $volumeId) {
                 // Get the indexing list
@@ -231,8 +227,6 @@ class UtilitiesController extends Controller
             $missingFiles = Craft::$app->getAssetIndexer()->getMissingFiles($params['sessionId']);
             $missingFolders = Craft::$app->getSession()->get('assetsMissingFolders', []);
             $skippedFiles = Craft::$app->getSession()->get('assetsSkippedFiles', []);
-
-            $responseArray = [];
 
             if (!empty($missingFiles) || !empty($missingFolders) || !empty($skippedFiles)) {
                 return $this->asJson([
@@ -424,88 +418,6 @@ class UtilitiesController extends Controller
                 'find' => $params['find'],
                 'replace' => $params['replace'],
             ]));
-        }
-
-        return $this->asJson([
-            'success' => true
-        ]);
-    }
-
-    /**
-     * Performs a Search Index action
-     *
-     * @return Response
-     * @throws ForbiddenHttpException if the user doesn't have access to the Search Indexes utility
-     */
-    public function actionSearchIndexPerformAction(): Response
-    {
-        $this->requirePermission('utility:search-indexes');
-
-        $params = Craft::$app->getRequest()->getRequiredBodyParam('params');
-
-        if (!empty($params['start'])) {
-            // Truncate the searchindex table
-            Craft::$app->getDb()->createCommand()
-                ->truncateTable(Table::SEARCHINDEX)
-                ->execute();
-
-            // Get all the element IDs ever
-            $elements = (new Query())
-                ->select(['id', 'type'])
-                ->from([Table::ELEMENTS])
-                ->where(['dateDeleted' => null])
-                ->all();
-
-            $batch = [];
-
-            foreach ($elements as $element) {
-                $batch[] = ['params' => $element];
-            }
-
-            return $this->asJson([
-                'batches' => [$batch]
-            ]);
-        }
-
-        /** @var ElementInterface $class */
-        $class = $params['type'];
-
-        if ($class::isLocalized()) {
-            $siteIds = Craft::$app->getSites()->getAllSiteIds();
-        } else {
-            $siteIds = [Craft::$app->getSites()->getPrimarySite()->id];
-        }
-
-        $query = $class::find()
-            ->id($params['id'])
-            ->anyStatus();
-
-        $searchService = Craft::$app->getSearch();
-
-        foreach ($siteIds as $siteId) {
-            $query->siteId($siteId);
-            $element = $query->one();
-
-            if ($element) {
-                /** @var Element $element */
-                $searchService->indexElementAttributes($element);
-
-                if ($class::hasContent() && ($fieldLayout = $element->getFieldLayout()) !== null) {
-                    $keywords = [];
-
-                    foreach ($fieldLayout->getFields() as $field) {
-                        /** @var Field $field */
-                        if ($field->searchable) {
-                            // Set the keywords for the content's site
-                            $fieldValue = $element->getFieldValue($field->handle);
-                            $fieldSearchKeywords = $field->getSearchKeywords($fieldValue, $element);
-                            $keywords[$field->id] = $fieldSearchKeywords;
-                        }
-                    }
-
-                    $searchService->indexElementFields($element->id, $siteId, $keywords);
-                }
-            }
         }
 
         return $this->asJson([

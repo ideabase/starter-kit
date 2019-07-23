@@ -411,7 +411,7 @@ New:
 | すべて | `relatedTo.sourceLocale` | `relatedTo.sourceSite` |
 | アセット | `source` | `volume` |
 | アセット | `sourceId` | `volumeId` |
-| 行列ブロック | `ownerLocale` | `ownerSite` または `ownerSiteId` |
+| 行列ブロック | `ownerLocale` | `site` または `siteId` |
 
 #### `limit` パラメータ
 
@@ -619,12 +619,12 @@ New:
 
 ### CSRF トークンパラメータ
 
-CSRF プロテクションは、Craft 3 ではデフォルトで有効になりました。（コンフィグ設定 `enableCsrfProtection` で）有効化していなかった場合、 コントローラーアクションで送信するフロントエンドのすべての `<form>` と JavaScript に新しい CSRF トークンパラメータを追加するアップデートが必要です。 あわせて、コンフィグ設定 `csrfTokenName` をセットする必要があります（デフォルトは `'CRAFT_CSRF_TOKEN'` となります）。
+CSRF プロテクションは、Craft 3 ではデフォルトで有効になりました。（コンフィグ設定 `enableCsrfProtection` で）有効化していなかった場合、 コントローラーアクションで送信するフロントエンドのすべての `<form>` と JavaScript に新しい CSRF トークンパラメータを追加するアップデートが必要です。
 
 ```twig
-{% set csrfTokenName = craft.app.config.general.csrfTokenName %}
+{% set csrfParam = craft.app.request.csrfParam %}
 {% set csrfToken = craft.app.request.csrfToken %}
-<input type="hidden" name="{{ csrfTokenName }}" value="{{ csrfToken }}">
+<input type="hidden" name="{{ csrfParam }}" value="{{ csrfToken }}">
 ```
 
 `csrfInput()` ファンクションは、ショートカットとして提供されています。

@@ -16,6 +16,7 @@ use craft\helpers\ArrayHelper;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
 use craft\helpers\FileHelper;
+use craft\helpers\Html;
 use craft\helpers\Json;
 use craft\helpers\Sequence;
 use craft\helpers\StringHelper;
@@ -26,6 +27,7 @@ use craft\web\twig\nodevisitors\EventTagAdder;
 use craft\web\twig\nodevisitors\EventTagFinder;
 use craft\web\twig\nodevisitors\GetAttrAdjuster;
 use craft\web\twig\tokenparsers\CacheTokenParser;
+use craft\web\twig\tokenparsers\DdTokenParser;
 use craft\web\twig\tokenparsers\ExitTokenParser;
 use craft\web\twig\tokenparsers\HeaderTokenParser;
 use craft\web\twig\tokenparsers\HookTokenParser;
@@ -114,6 +116,7 @@ class Extension extends AbstractExtension implements GlobalsInterface
     {
         return [
             new CacheTokenParser(),
+            new DdTokenParser(),
             new ExitTokenParser(),
             new HeaderTokenParser(),
             new HookTokenParser(),
@@ -210,8 +213,8 @@ class Extension extends AbstractExtension implements GlobalsInterface
             new TwigFilter('duration', [DateTimeHelper::class, 'humanDurationFromInterval']),
             new TwigFilter('encenc', [$this, 'encencFilter']),
             new TwigFilter('filesize', [$formatter, 'asShortSize']),
-            new TwigFilter('filter', 'array_filter'),
-            new TwigFilter('filterByValue', [ArrayHelper::class, 'filterByValue']),
+            new TwigFilter('filter', [$this, 'filterFilter']),
+            new TwigFilter('filterByValue', [ArrayHelper::class, 'where']),
             new TwigFilter('group', [$this, 'groupFilter']),
             new TwigFilter('hash', [$security, 'hashData']),
             new TwigFilter('id', [$this->view, 'formatInputId']),
@@ -246,6 +249,7 @@ class Extension extends AbstractExtension implements GlobalsInterface
             new TwigFilter('unique', 'array_unique'),
             new TwigFilter('values', 'array_values'),
             new TwigFilter('without', [$this, 'withoutFilter']),
+            new TwigFilter('withoutKey', [$this, 'withoutKeyFilter']),
         ];
     }
 
@@ -412,6 +416,20 @@ class Extension extends AbstractExtension implements GlobalsInterface
             ArrayHelper::removeValue($arr, $value);
         }
 
+        return $arr;
+    }
+
+    /**
+     * Returns an array without a certain key.
+     *
+     * @param mixed $arr
+     * @param string $key
+     * @return array
+     */
+    public function withoutKeyFilter($arr, string $key): array
+    {
+        $arr = (array)$arr;
+        ArrayHelper::remove($arr, $key);
         return $arr;
     }
 
@@ -586,6 +604,28 @@ class Extension extends AbstractExtension implements GlobalsInterface
     }
 
     /**
+     * Filters an array.
+     *
+     * @param array|\Traversable $arr
+     * @param callable|null $arrow
+     * @return array
+     */
+    public function filterFilter($arr, $arrow = null)
+    {
+        if ($arrow === null) {
+            return array_filter($arr);
+        }
+
+        $filtered = twig_array_filter($arr, $arrow);
+
+        if (is_array($filtered)) {
+            return $filtered;
+        }
+
+        return iterator_to_array($filtered);
+    }
+
+    /**
      * Groups an array or element query's results by a common property.
      *
      * @param array|\Traversable $arr
@@ -716,6 +756,7 @@ class Extension extends AbstractExtension implements GlobalsInterface
             new TwigFunction('alias', [Craft::class, 'getAlias']),
             new TwigFunction('actionInput', [$this, 'actionInputFunction']),
             new TwigFunction('actionUrl', [UrlHelper::class, 'actionUrl']),
+            new TwigFunction('attr', [$this, 'attrFunction']),
             new TwigFunction('cpUrl', [UrlHelper::class, 'cpUrl']),
             new TwigFunction('ceil', 'ceil'),
             new TwigFunction('className', 'get_class'),
@@ -747,6 +788,17 @@ class Extension extends AbstractExtension implements GlobalsInterface
     }
 
     /**
+     * Renders HTML tag attributes with [[\craft\helpers\Html::renderTagAttributes()]]
+     *
+     * @param array $attributes
+     * @return Markup
+     */
+    public function attrFunction(array $config): Markup
+    {
+        return TemplateHelper::raw(Html::renderTagAttributes($config));
+    }
+
+    /**
      * Returns a CSRF input wrapped in a \Twig\Markup object.
      *
      * @return Markup|null
@@ -756,7 +808,8 @@ class Extension extends AbstractExtension implements GlobalsInterface
         $generalConfig = Craft::$app->getConfig()->getGeneral();
 
         if ($generalConfig->enableCsrfProtection === true) {
-            return TemplateHelper::raw('<input type="hidden" name="' . $generalConfig->csrfTokenName . '" value="' . Craft::$app->getRequest()->getCsrfToken() . '">');
+            $request = Craft::$app->getRequest();
+            return TemplateHelper::raw('<input type="hidden" name="' . $request->csrfParam . '" value="' . $request->getCsrfToken() . '">');
         }
 
         return null;

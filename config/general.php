@@ -34,7 +34,7 @@ return [
   'dev' => [
     // Base site URL
     // e.g. http://ideabase.web
-    'siteUrl' => 'LOCAL URL (MAMP hostname) HERE',
+    'siteUrl' => 'LOCAL URL HERE',
 
     // Dev Mode (see https://craftcms.com/support/dev-mode)
     'devMode' => true,
