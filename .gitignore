@@ -1,6 +1,8 @@
 httpdocs/assets/img/uploads/
 !httpdocs/assets/img/uploads/logo.png
 storage/backups/
+storage/composer-backups/
+storage/config-backups/
 storage/logs/
 storage/runtime/
 vendor/composer/composer/doc/fixtures/repo-composer-with-providers/p/
