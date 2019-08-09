@@ -1,0 +1,6 @@
+{# scripts to be added to the end of the body to defer loading #}
+
+{# add grunt-contrib-watch live reload script if in dev mode #}
+{% if craft.app.config.general.devMode %}
+  <script src="//localhost:35729/livereload.js"></script>
+{% endif %}

@@ -4,27 +4,27 @@
 
 <html lang="en-US">
 <head>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta charset="utf-8" />
-  <title>{% if entry|default() %}{{ entry.title }}{% else %}{{ currentSite.name }}{% endif %}</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <meta name="referrer" content="origin-when-cross-origin" />
-  {% block head %}
-  {% endblock %}
+  {# include the head #}
+  {% include '_globals/head' %}
+
+  {# block for pages that need extra metadata #}
+  {% block head %}{% endblock %}
 </head>
 
 <body>
-  {# include the site header #}
+  {# include the header #}
   {% include '_globals/header'%}
 
   <main>
-    {# main content block #}
-    {% block content %}
-    {% endblock %}
+    {# content block #}
+    {% block content %}{% endblock %}
   </main>
 
-  {# include the site footer #}
+  {# include the footer #}
   {% include '_globals/footer' %}
+
+  {# include scripts here to defer loading of scripts until content and style are loaded #}
+  {% include '_globals/scripts' %}
 </body>
 </html>
 

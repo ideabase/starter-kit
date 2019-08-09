@@ -52,6 +52,7 @@ npm i -g sass grunt-cli
 ```
 - In the `httpdocs/` folder of the project, edit `Gruntfile.js` and enter your local site URL into the criticalcss options
 - After installation, Grunt can be used with the command `grunt` in the `httpdocs/` folder to compile SCSS into CSS and minify CSS and JS files
+- Issuing the command `grunt critical` will generate critical css as `httpdocs/css/critical.css`
 
 ## Post-Setup
 

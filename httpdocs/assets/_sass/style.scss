@@ -1,5 +1,8 @@
 /** use '@import' to import all Sass partials into this one
-  * grunt turns this file into the main styelsheet
+  *
+  * grunt will turn this file into the main CSS stylesheet
   */
 
-@import 'partials/main.scss';
+@import 'partials/normalize';
+
+@import 'partials/main';
