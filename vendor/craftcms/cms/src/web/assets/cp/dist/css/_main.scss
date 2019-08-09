@@ -909,11 +909,13 @@ ul.icons li a:hover {
 
   &:not(.flex-nowrap) {
     flex-wrap: wrap;
+
+    & > * {
+      margin-bottom: 7px;
+    }
   }
 
   & > * {
-    margin-bottom: 7px;
-
     &.label {
       white-space: nowrap;
     }
@@ -2280,32 +2282,6 @@ table.editable {
           & + td.action {
             @include border-left(none);
             @include padding-left(0);
-          }
-        }
-
-        &.code {
-          textarea::-webkit-input-placeholder {
-            @include sans-serif-font;
-          }
-
-          textareainput:-ms-input-placeholder {
-            @include sans-serif-font;
-          }
-
-          textarea::-ms-input-placeholder {
-            @include sans-serif-font;
-          }
-
-          textarea:-moz-placeholder {
-            @include sans-serif-font;
-          }
-
-          textarea::-moz-placeholder {
-            @include sans-serif-font;
-          }
-
-          textarea::placeholder {
-            @include sans-serif-font;
           }
         }
 

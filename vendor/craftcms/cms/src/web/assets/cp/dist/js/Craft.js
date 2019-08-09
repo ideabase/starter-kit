@@ -1,4 +1,4 @@
-/*!   - 2019-07-22 */
+/*!   - 2019-08-01 */
 (function($){
 
 /** global: Craft */
@@ -373,7 +373,7 @@ $.extend(Craft,
                     }
                 },
                 complete: function(jqXHR, textStatus) {
-                    if (textStatus !== 'success') {
+                    if (textStatus === 'error') {
                         if (typeof Craft.cp !== 'undefined') {
                             Craft.cp.displayError();
                         }
@@ -1502,7 +1502,7 @@ Craft.BaseElementEditor = Garnish.Base.extend(
         loadHud: function() {
             this.onBeginLoading();
             var data = this.getBaseData();
-            data.includeSites = this.settings.showSiteSwitcher;
+            data.includeSites = Craft.isMultiSite && this.settings.showSiteSwitcher;
             Craft.postActionRequest('elements/get-editor-html', data, $.proxy(this, 'showHud'));
         },
 
@@ -1513,18 +1513,23 @@ Craft.BaseElementEditor = Garnish.Base.extend(
                 var $hudContents = $();
 
                 if (response.sites) {
-                    var $header = $('<div class="hud-header"/>'),
-                        $siteSelectContainer = $('<div class="select"/>').appendTo($header);
+                    var $header = $('<div class="hud-header"/>');
 
-                    this.$siteSelect = $('<select/>').appendTo($siteSelectContainer);
-                    this.$siteSpinner = $('<div class="spinner hidden"/>').appendTo($header);
+                    if (response.sites.length === 1) {
+                        $('<h5/>', {text: response.sites[0].name}).appendTo($header);;
+                    } else {
+                        var $siteSelectContainer = $('<div class="select"/>').appendTo($header);
 
-                    for (var i = 0; i < response.sites.length; i++) {
-                        var siteInfo = response.sites[i];
-                        $('<option value="' + siteInfo.id + '"' + (siteInfo.id == response.siteId ? ' selected="selected"' : '') + '>' + siteInfo.name + '</option>').appendTo(this.$siteSelect);
+                        this.$siteSelect = $('<select/>').appendTo($siteSelectContainer);
+                        this.$siteSpinner = $('<div class="spinner hidden"/>').appendTo($header);
+
+                        for (var i = 0; i < response.sites.length; i++) {
+                            var siteInfo = response.sites[i];
+                            $('<option value="' + siteInfo.id + '"' + (siteInfo.id == response.siteId ? ' selected="selected"' : '') + '>' + siteInfo.name + '</option>').appendTo(this.$siteSelect);
+                        }
+
+                        this.addListener(this.$siteSelect, 'change', 'switchSite');
                     }
-
-                    this.addListener(this.$siteSelect, 'change', 'switchSite');
 
                     $hudContents = $hudContents.add($header);
                 }
@@ -1717,6 +1722,9 @@ Craft.BaseElementEditor = Garnish.Base.extend(
             this.trigger('saveElement', {
                 response: response
             });
+
+            // There may be a new background job that needs to be run
+            Craft.cp.runQueue();
         },
 
         onCreateForm: function($form) {
@@ -1790,6 +1798,7 @@ Craft.BaseElementIndex = Garnish.Base.extend(
         searching: false,
         searchText: null,
         trashed: false,
+        drafts: false,
         $clearSearchBtn: null,
 
         $statusMenuBtn: null,
@@ -2333,7 +2342,8 @@ Craft.BaseElementIndex = Garnish.Base.extend(
                 search: this.searchText,
                 offset: this.settings.batchSize * (this.page - 1),
                 limit: this.settings.batchSize,
-                trashed: this.trashed ? 1 : 0
+                trashed: this.trashed ? 1 : 0,
+                drafts: this.drafts ? 1 : 0,
             };
 
             if (!Garnish.hasAttr(this.$source, 'data-override-status')) {
@@ -2493,7 +2503,7 @@ Craft.BaseElementIndex = Garnish.Base.extend(
 
         afterAction: function(action, params) {
 
-            // There may be a new background task that needs to be run
+            // There may be a new background job that needs to be run
             Craft.cp.runQueue();
 
             this.onAfterAction(action, params);
@@ -3072,11 +3082,15 @@ Craft.BaseElementIndex = Garnish.Base.extend(
             var $option = $(ev.selectedOption).addClass('sel');
             this.$statusMenuBtn.html($option.html());
 
+            this.trashed = false;
+            this.drafts = false;
+            this.status = null;
+
             if (Garnish.hasAttr($option, 'data-trashed')) {
                 this.trashed = true;
-                this.status = null;
+            } else if (Garnish.hasAttr($option, 'data-drafts')) {
+                this.drafts = true;
             } else {
-                this.trashed = false;
                 this.status = $option.data('status');
             }
 
@@ -3185,7 +3199,7 @@ Craft.BaseElementIndex = Garnish.Base.extend(
                 return;
             }
 
-            if (this.trashed || this.searching) {
+            if (this.trashed || this.drafts || this.searching) {
                 $option.addClass('disabled');
                 if (this.getSelectedSortAttribute() === 'structure') {
                     // Temporarily set the sort to the first option
@@ -3532,6 +3546,7 @@ Craft.BaseElementIndex = Garnish.Base.extend(
                 $spinner.removeClass('hidden');
 
                 var params = this.getViewParams();
+                delete params.criteria.limit;
 
                 var limit = parseInt($limitField.find('input').val());
                 if (limit && !isNaN(limit)) {
@@ -4414,6 +4429,10 @@ Craft.BaseElementSelectInput = Garnish.Base.extend(
         onSelectElements: function(elements) {
             this.trigger('selectElements', {elements: elements});
             this.settings.onSelectElements(elements);
+
+            if (window.draftEditor) {
+                window.draftEditor.checkForm();
+            }
         },
 
         onRemoveElements: function() {
@@ -12877,7 +12896,9 @@ Craft.DraftEditor = Garnish.Base.extend(
         lastSerializedValue: null,
         timeout: null,
         saving: false,
+        saveXhr: null,
         checkFormAfterUpdate: false,
+        submittingForm: false,
 
         duplicatedElements: null,
         errors: null,
@@ -13169,6 +13190,12 @@ Craft.DraftEditor = Garnish.Base.extend(
 
         saveDraft: function(data) {
             return new Promise(function(resolve, reject) {
+                // Ignore if we're already submitting the main form
+                if (this.submittingForm) {
+                    reject();
+                    return;
+                }
+
                 this.lastSerializedValue = data;
 
                 if (this.saving) {
@@ -13187,12 +13214,16 @@ Craft.DraftEditor = Garnish.Base.extend(
                 var url = Craft.getActionUrl(this.settings.saveDraftAction);
                 var i;
 
-                Craft.postActionRequest(url, this.prepareData(data), function(response, textStatus) {
+                this.saveXhr = Craft.postActionRequest(url, this.prepareData(data), function(response, textStatus) {
                     $spinners.addClass('hidden');
                     if (this.$saveMetaBtn) {
                         this.$saveMetaBtn.removeClass('active');
                     }
                     this.saving = false;
+
+                    if (textStatus === 'abort') {
+                        return;
+                    }
 
                     if (textStatus !== 'success' || response.errors) {
                         this.errors = (response ? response.errors : null) || [];
@@ -13478,10 +13509,23 @@ Craft.DraftEditor = Garnish.Base.extend(
         handleFormSubmit: function(ev) {
             ev.preventDefault();
 
+            // Prevent double form submits
+            if (this.submittingForm) {
+                return;
+            }
+
             // If we're editing a draft, this isn't a custom trigger, and the user isn't allowed to update the source,
             // then ignore the submission
             if (!ev.customTrigger && !this.settings.isUnsavedDraft && this.settings.draftId && !this.settings.canUpdateSource) {
                 return;
+            }
+
+            // Prevent the normal unload confirmation dialog
+            Craft.cp.$confirmUnloadForms = Craft.cp.$confirmUnloadForms.not(Craft.cp.$primaryForm);
+
+            // Abort the current save request if there is one
+            if (this.saving) {
+                this.saveXhr.abort();
             }
 
             // Duplicate the form with normalized data
@@ -13527,6 +13571,7 @@ Craft.DraftEditor = Garnish.Base.extend(
 
             $form.appendTo(Garnish.$bod);
             $form.submit();
+            this.submittingForm = true;
         },
     },
     {
