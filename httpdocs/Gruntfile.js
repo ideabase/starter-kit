@@ -4,10 +4,10 @@ module.exports = function (grunt) {
     sass: {
       dist: {
         options: {
-          style: 'compressed',
+          style: 'compressed'
         },
         files: {
-          'assets/css/style.css': 'assets/_sass/style.scss',
+          'assets/css/style.css': 'assets/_sass/style.scss'
         }
       }
     },
@@ -22,7 +22,7 @@ module.exports = function (grunt) {
       },
       dist: {
         src: 'assets/css/style.css'
-      },
+      }
     },
     criticalcss: {
       custom: {
@@ -33,7 +33,7 @@ module.exports = function (grunt) {
           outputfile: "assets/css/critical.css",
           filename: "assets/css/style.css",
           buffer: 800 * 1024,
-          ignoreConsole: false,
+          ignoreConsole: false
         }
       }
     },
@@ -49,17 +49,17 @@ module.exports = function (grunt) {
         files: '**/*.scss',
         tasks: ['sass', 'postcss'],
         options: {
-          livereload: true,
+          livereload: true
         }
       },
       js: {
         files: '**/js/*.js',
         tasks: ['uglify'],
         options: {
-          livereload: true,
+          livereload: true
         }
-      },
-    },
+      }
+    }
   });
 
   // Plugins
