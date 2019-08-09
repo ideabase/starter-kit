@@ -3,6 +3,8 @@
   * grunt will turn this file into the main CSS stylesheet
   */
 
-@import 'partials/normalize';
+@import 'helpers/normalize';
+@import 'helpers/variables';
+@import 'helpers/mixins';
 
 @import 'partials/main';
