@@ -1,18 +1,26 @@
+# uploaded images
 httpdocs/assets/img/uploads/
 !httpdocs/assets/img/uploads/logo.png
+
+# image transforms
+httpdocs/assets/*/_*
+
+# backups and logs
 storage/backups/
 storage/composer-backups/
 storage/config-backups/
 storage/logs/
 storage/runtime/
-vendor/composer/composer/doc/fixtures/repo-composer-with-providers/p/
 
+# files that don't need versioning
 **/.DS_Store
 **/.sass-cache/
 **/node_modules/
 **/cpresources/
 **/*.css.map
-.env
 .idea
 .sass-cache
 .vscode/
+
+# .env stores environment variables that should be kept private
+.env
