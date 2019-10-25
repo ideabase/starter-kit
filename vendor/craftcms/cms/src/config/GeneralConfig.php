@@ -21,7 +21,7 @@ use yii\base\UnknownPropertyException;
  * General config class
  *
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
- * @since 3.0
+ * @since 3.0.0
  */
 class GeneralConfig extends BaseObject
 {
@@ -67,6 +67,8 @@ class GeneralConfig extends BaseObject
      * ::: warning
      * Don’t disable this setting until **all** environments have been updated to Craft 3.1.0 or later.
      * :::
+     *
+     * @since 3.1.0
      */
     public $allowAdminChanges = true;
     /**
@@ -185,7 +187,7 @@ class GeneralConfig extends BaseObject
      * ],
      * ```
      *
-     * @deprecated in 3.0.10. Any corrections to ASCII char mappings should be submitted to [Stringy](https://github.com/danielstjules/Stringy).
+     * @deprecated in 3.0.10. Any corrections to ASCII char mappings should be submitted to [Stringy](https://github.com/voku/Stringy).
      */
     public $customAsciiCharMappings = [];
     /**
@@ -272,6 +274,7 @@ class GeneralConfig extends BaseObject
      *     'disabledPlugins' => ['webhooks'],
      * ],
      * ```
+     * @since 3.1.9
      */
     public $disabledPlugins = [];
     /**
@@ -282,6 +285,14 @@ class GeneralConfig extends BaseObject
      * @see enableCsrfProtection
      */
     public $enableCsrfCookie = true;
+    /**
+     * @var bool Whether the GraphQL API should be enabled.
+     *
+     * Note that the GraphQL API is only available for Craft Pro.
+     *
+     * @since 3.3.1
+     */
+    public $enableGql = true;
     /**
      * @var mixed The amount of time a user’s elevated session will last, which is required for some sensitive actions (e.g. user group/permission assignment).
      *
@@ -296,6 +307,18 @@ class GeneralConfig extends BaseObject
      * @see enableCsrfCookie
      */
     public $enableCsrfProtection = true;
+    /**
+     * @var bool Whether Craft should cache GraphQL queries.
+     *
+     * If set to `true`, Craft will cache the results for unique GraphQL queries per access token. The cache is
+     * automatically invalidated any time an element is saved, the site structure is updated, or a GraphQL schema is saved.
+     *
+     * This setting will have no effect if a plugin is using the [[\craft\services\Gql::EVENT_BEFORE_EXECUTE_GQL_QUERY]] event to provide
+     * its own caching logic and setting the `result` property.
+     *
+     * @since 3.3.12
+     */
+    public $enableGraphQlCaching = true;
     /**
      * @var bool Whether to enable Craft's template `{% cache %}` tag on a global basis.
      * @see http://craftcms.com/docs/templating/cache
@@ -318,6 +341,8 @@ class GeneralConfig extends BaseObject
      *
      * Only use this setting if your server has the Intl PHP extension, or if you’ve saved the corresponding
      * [locale data](https://github.com/craftcms/locales) into your `config/locales/` folder.
+     *
+     * @since 3.0.24
      */
     public $extraAppLocales;
     /**
@@ -342,6 +367,8 @@ class GeneralConfig extends BaseObject
      * File extensions listed here won’t immediately be allowed to be uploaded. You will also need to list them with
      * the [[$extraAllowedFileExtensions]] config setting.
      * :::
+     *
+     * @since 3.0.37
      */
     public $extraFileKinds = [];
     /**
@@ -352,6 +379,22 @@ class GeneralConfig extends BaseObject
      * @var bool Whether images transforms should be generated before page load.
      */
     public $generateTransformsBeforePageLoad = false;
+    /**
+     * @var bool bool Whether the system should run in Headless Mode, which
+     * optimizes the system and Control Panel for headless CMS implementations.
+     *
+     * When this is enabled, the following changes will take place:
+     *
+     * - URI Format settings for sections and category groups will be hidden.
+     * - Template route management will be hidden.
+     * - Front-end routing will skip checks for element and template requests.
+     * - Front-end responses will be JSON-formatted rather than HTML by default.
+     * - Twig will be configured to escape unsafe strings for JavaScript/JSON
+     *   rather than HTML by default for front-end requests.
+     *
+     * @since 3.3.0
+     */
+    public $headlessMode = false;
     /**
      * @var mixed The image driver Craft should use to cleanse and transform images. By default Craft will auto-detect if ImageMagick is installed and fallback to GD if not. You can explicitly set
      * either `'imagick'` or `'gd'` here to override that behavior.
@@ -425,6 +468,8 @@ class GeneralConfig extends BaseObject
      * @var int|null The maximum number of revisions that should be stored for each element.
      *
      * Set to `0` if you want to store an unlimited number of revisions.
+     *
+     * @since 3.2.0
      */
     public $maxRevisions = 50;
     /**
@@ -531,6 +576,8 @@ class GeneralConfig extends BaseObject
      *
      * Setting this to `true` will prevent Craft from transforming CMYK images to sRGB, but on some ImageMagick versions can cause color
      * distortion in the image. This will only have effect if ImageMagick is in use.
+     *
+     * @since 3.0.8
      */
     public $preserveCmykColorspace = false;
     /**
@@ -573,11 +620,23 @@ class GeneralConfig extends BaseObject
      */
     public $purgePendingUsersDuration = 0;
     /**
+     * @var mixed The amount of time to wait before Craft purges stale user sessions from the sessions table in the database.
+     *
+     * Set to `0` to disable this feature.
+     *
+     * See [[ConfigHelper::durationInSeconds()]] for a list of supported value types.
+     *
+     * @since 3.3.0
+     */
+    public $purgeStaleUserSessionDuration = 7776000;
+    /**
      * @var mixed The amount of time to wait before Craft purges drafts of new elements that were never formally saved.
      *
      * Set to `0` to disable this feature.
      *
      * See [[ConfigHelper::durationInSeconds()]] for a list of supported value types.
+     *
+     * @since 3.2.0
      */
     public $purgeUnsavedDraftsDuration = 2592000;
     /**
@@ -741,16 +800,21 @@ class GeneralConfig extends BaseObject
      * Set to `0` if you don’t ever want to delete soft-deleted items.
      *
      * See [[ConfigHelper::durationInSeconds()]] for a list of supported value types.
+     *
+     * @since 3.1.0
      */
     public $softDeleteDuration = 2592000;
     /**
      * @var bool Whether user IP addresses should be stored/logged by the system.
+     * @since 3.1.0
      */
     public $storeUserIps = false;
     /**
      * @var bool Whether Twig runtime errors should be suppressed.
      *
      * If it is set to `true`, the errors will still be logged to Craft’s log files.
+     *
+     * @deprecated in 3.3.0
      */
     public $suppressTemplateErrors = false;
     /**
@@ -768,6 +832,7 @@ class GeneralConfig extends BaseObject
     public $timezone;
     /**
      * @var bool Whether GIF files should be cleansed/transformed.
+     * @since 3.0.7
      */
     public $transformGifs = true;
     /**
@@ -847,6 +912,8 @@ class GeneralConfig extends BaseObject
      * Make sure you’ve read the entire [Project Config](https://docs.craftcms.com/v3/project-config.html)
      * documentation, and carefully follow the “Enabling the Project Config File” steps when enabling this setting.
      * :::
+     *
+     * @since 3.1.0
      */
     public $useProjectConfigFile = false;
     /**
@@ -860,6 +927,7 @@ class GeneralConfig extends BaseObject
      *
      * See [[ConfigHelper::localizedValue()]] for a list of supported value types.
      * @see getVerifyEmailSuccessPath()
+     * @since 3.1.20
      */
     public $verifyEmailSuccessPath = '';
 
@@ -996,6 +1064,10 @@ class GeneralConfig extends BaseObject
                 }
             }
         }
+
+        if ($this->suppressTemplateErrors) {
+            Craft::$app->getDeprecator()->log('suppressTemplateErrors', "The suppressTemplateErrors config setting has been deprecated because it relies on a deprecated Twig feature.");
+        }
     }
 
     /**
@@ -1016,6 +1088,7 @@ class GeneralConfig extends BaseObject
      * @param string|null $siteHandle The site handle the value should be defined for. Defaults to the current site.
      * @return string
      * @see verifyEmailSuccessPath
+     * @since 3.1.20
      */
     public function getVerifyEmailSuccessPath(string $siteHandle = null): string
     {

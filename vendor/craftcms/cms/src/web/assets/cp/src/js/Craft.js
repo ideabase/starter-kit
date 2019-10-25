@@ -364,19 +364,21 @@ $.extend(Craft,
                 headers: headers,
                 data: data,
                 success: callback,
-                error: function(jqXHR, textStatus) {
+                error: function(jqXHR, textStatus, errorThrown) {
+                    // Ignore incomplete requests, likely due to navigating away from the page
+                    // h/t https://stackoverflow.com/a/22107079/1688568
+                    if (jqXHR.readyState !== 4) {
+                        return;
+                    }
+
+                    if (typeof Craft.cp !== 'undefined') {
+                        Craft.cp.displayError();
+                    } else {
+                        alert(Craft.t('app', 'An unknown error occurred.'));
+                    }
+
                     if (callback) {
                         callback(null, textStatus, jqXHR);
-                    }
-                },
-                complete: function(jqXHR, textStatus) {
-                    if (textStatus === 'error') {
-                        if (typeof Craft.cp !== 'undefined') {
-                            Craft.cp.displayError();
-                        }
-                        else {
-                            alert(Craft.t('app', 'An unknown error occurred.'));
-                        }
                     }
                 }
             }, options));

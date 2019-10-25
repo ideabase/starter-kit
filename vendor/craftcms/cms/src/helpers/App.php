@@ -23,6 +23,7 @@ use craft\models\MailSettings;
 use craft\services\ProjectConfig as ProjectConfigService;
 use craft\web\AssetManager;
 use craft\web\Request as WebRequest;
+use craft\web\Response as WebResponse;
 use craft\web\Session;
 use craft\web\User as WebUser;
 use craft\web\View;
@@ -33,12 +34,13 @@ use yii\i18n\PhpMessageSource;
 use yii\log\Dispatcher;
 use yii\log\Logger;
 use yii\mutex\FileMutex;
+use yii\web\JsonParser;
 
 /**
  * App helper.
  *
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
- * @since 3.0
+ * @since 3.0.0
  */
 class App
 {
@@ -68,6 +70,7 @@ class App
      *
      * @param int $edition An edition’s ID.
      * @return string The edition’s name.
+     * @since 3.1.0
      */
     public static function editionHandle(int $edition): string
     {
@@ -105,6 +108,7 @@ class App
      * @param string $handle An edition’s handle
      * @return int The edition’s ID
      * @throws InvalidArgumentException if $handle is invalid
+     * @since 3.1.0
      */
     public static function editionIdByHandle(string $handle): int
     {
@@ -185,6 +189,7 @@ class App
      *
      * @param string $var The PHP config setting to retrieve.
      * @return int|float The value normalized into bytes.
+     * @since 3.0.38
      */
     public static function phpConfigValueInBytes(string $var)
     {
@@ -210,6 +215,7 @@ class App
      * Tests whether ini_set() works.
      *
      * @return bool
+     * @since 3.0.40
      */
     public static function testIniSet(): bool
     {
@@ -319,6 +325,8 @@ class App
      * Returns the backtrace as a string (omitting the final frame where this method was called).
      *
      * @param int $limit The max number of stack frames to be included (0 means no limit)
+     * @return string
+     * @since 3.0.13
      */
     public static function backtrace(int $limit = 0): string
     {
@@ -345,6 +353,7 @@ class App
      * Returns the `assetManager` component config for web requests.
      *
      * @return array
+     * @since 3.0.18
      */
     public static function assetManagerConfig(): array
     {
@@ -364,6 +373,7 @@ class App
      * Returns the `cache` component config.
      *
      * @return array
+     * @since 3.0.18
      */
     public static function cacheConfig(): array
     {
@@ -383,6 +393,7 @@ class App
      *
      * @param DbConfig|null $dbConfig The database config settings
      * @return array
+     * @since 3.0.18
      */
     public static function dbConfig(DbConfig $dbConfig = null): array
     {
@@ -424,6 +435,7 @@ class App
      * Returns the system email settings.
      *
      * @return MailSettings
+     * @since 3.1.0
      */
     public static function mailSettings(): MailSettings
     {
@@ -436,6 +448,7 @@ class App
      *
      * @param MailSettings|null $settings The system mail settings
      * @return array
+     * @since 3.0.18
      */
     public static function mailerConfig(MailSettings $settings = null): array
     {
@@ -465,6 +478,7 @@ class App
      * Returns the `mutex` component config.
      *
      * @return array
+     * @since 3.0.18
      */
     public static function mutexConfig(): array
     {
@@ -481,6 +495,7 @@ class App
      * Returns the `log` component config.
      *
      * @return array|null
+     * @since 3.0.18
      */
     public static function logConfig()
     {
@@ -536,6 +551,7 @@ class App
      * Returns the `session` component config for web requests.
      *
      * @return array
+     * @since 3.0.18
      */
     public static function sessionConfig(): array
     {
@@ -554,6 +570,7 @@ class App
      * Returns the `user` component config for web requests.
      *
      * @return array
+     * @since 3.0.18
      */
     public static function userConfig(): array
     {
@@ -590,6 +607,7 @@ class App
      * Returns the `view` component config.
      *
      * @return array
+     * @since 3.0.18
      */
     public static function viewConfig(): array
     {
@@ -612,6 +630,7 @@ class App
      * Returns the `request` component config for web requests.
      *
      * @return array
+     * @since 3.0.18
      */
     public static function webRequestConfig(): array
     {
@@ -624,6 +643,9 @@ class App
             'enableCsrfValidation' => $generalConfig->enableCsrfProtection,
             'enableCsrfCookie' => $generalConfig->enableCsrfCookie,
             'csrfParam' => $generalConfig->csrfTokenName,
+            'parsers' => [
+                'application/json' => JsonParser::class,
+            ],
         ];
 
         if ($generalConfig->trustedHosts !== null) {
@@ -640,6 +662,26 @@ class App
 
         if ($generalConfig->secureProtocolHeaders !== null) {
             $config['secureProtocolHeaders'] = $generalConfig->secureProtocolHeaders;
+        }
+
+        return $config;
+    }
+
+    /**
+     * Returns the `response` component config for web requests.
+     *
+     * @return array
+     * @since 3.3.0
+     */
+    public static function webResponseConfig(): array
+    {
+        $config = [
+            'class' => WebResponse::class,
+        ];
+
+        // Default to JSON responses if running in headless mode
+        if (Craft::$app->getRequest()->getIsSiteRequest() && Craft::$app->getConfig()->getGeneral()->headlessMode) {
+            $config['format'] = WebResponse::FORMAT_JSON;
         }
 
         return $config;

@@ -82,6 +82,7 @@ class ResaveController extends Controller
 
     /**
      * @var string|null The type handle(s) of the elements to resave.
+     * @since 3.1.16
      */
     public $type;
 
@@ -113,6 +114,8 @@ class ResaveController extends Controller
             case 'assets':
                 $options[] = 'volume';
                 break;
+            case 'tags':
+            case 'users':
             case 'categories':
                 $options[] = 'group';
                 break;
@@ -123,12 +126,6 @@ class ResaveController extends Controller
             case 'matrix-blocks':
                 $options[] = 'field';
                 $options[] = 'type';
-                break;
-            case 'tags':
-                $options[] = 'group';
-                break;
-            case 'users':
-                $options[] = 'group';
                 break;
         }
 
@@ -183,8 +180,10 @@ class ResaveController extends Controller
     /**
      * Re-saves Matrix blocks.
      *
+     * Note that you must supply the --field or --element-id argument for this to work properly.
+     *
      * @return int
-     * @since 3.2
+     * @since 3.2.0
      */
     public function actionMatrixBlocks(): int
     {
@@ -238,6 +237,7 @@ class ResaveController extends Controller
     /**
      * @param ElementQueryInterface $query
      * @return int
+     * @since 3.2.0
      */
     public function saveElements(ElementQueryInterface $query): int
     {

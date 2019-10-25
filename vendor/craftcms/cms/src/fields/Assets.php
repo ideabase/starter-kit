@@ -11,24 +11,31 @@ use Craft;
 use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\base\Volume;
+use craft\db\Table as DbTable;
 use craft\elements\Asset;
 use craft\elements\db\AssetQuery;
 use craft\elements\db\ElementQuery;
 use craft\errors\InvalidSubpathException;
 use craft\errors\InvalidVolumeException;
+use craft\gql\arguments\elements\Asset as AssetArguments;
+use craft\gql\interfaces\elements\Asset as AssetInterface;
+use craft\gql\resolvers\elements\Asset as AssetResolver;
 use craft\helpers\ArrayHelper;
 use craft\helpers\Assets as AssetsHelper;
+use craft\helpers\Db;
 use craft\helpers\ElementHelper;
 use craft\helpers\FileHelper;
+use craft\helpers\Gql;
 use craft\helpers\Html;
 use craft\web\UploadedFile;
+use GraphQL\Type\Definition\Type;
 use yii\base\InvalidConfigException;
 
 /**
  * Assets represents an Assets field.
  *
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
- * @since 3.0
+ * @since 3.0.0
  */
 class Assets extends BaseRelationField
 {
@@ -394,6 +401,20 @@ class Assets extends BaseRelationField
         return $this->_determineUploadFolderId($element, true);
     }
 
+    /**
+     * @inheritdoc
+     * @since 3.3.0
+     */
+    public function getContentGqlType()
+    {
+        return [
+            'name' => $this->handle,
+            'type' => Type::listOf(AssetInterface::getType()),
+            'args' => AssetArguments::getArguments(),
+            'resolve' => AssetResolver::class . '::resolve',
+        ];
+    }
+
     // Events
     // -------------------------------------------------------------------------
 
@@ -494,6 +515,24 @@ class Assets extends BaseRelationField
         }
 
         parent::afterElementSave($element, $isNew);
+    }
+
+    /**
+     * @inheritdoc
+     * @since 3.3.0
+     */
+    public function getEagerLoadingGqlConditions()
+    {
+        $allowedEntities = Gql::extractAllowedEntitiesFromSchema();
+        $allowedVolumeUids = $allowedEntities['volumes'] ?? [];
+
+        if (empty($allowedVolumeUids)) {
+            return false;
+        }
+
+        $volumeIds = Db::idsByUids(DbTable::VOLUMES, $allowedVolumeUids);
+
+        return ['volumeId' => array_values($volumeIds)];
     }
 
     // Protected Methods
@@ -640,9 +679,9 @@ class Assets extends BaseRelationField
      * @param string $subpath
      * @param ElementInterface|null $element
      * @param bool $createDynamicFolders whether missing folders should be created in the process
-     * @throws InvalidVolumeException if the volume root folder doesn’t exist
-     * @throws InvalidSubpathException if the subpath cannot be parsed in full
      * @return int
+     * @throws InvalidSubpathException if the subpath cannot be parsed in full
+     * @throws InvalidVolumeException if the volume root folder doesn’t exist
      */
     private function _resolveVolumePathToFolderId(string $uploadSource, string $subpath, ElementInterface $element = null, bool $createDynamicFolders = true): int
     {

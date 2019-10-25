@@ -13,16 +13,23 @@ use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\base\Field;
 use craft\base\FieldInterface;
+use craft\base\GqlInlineFragmentFieldInterface;
+use craft\base\GqlInlineFragmentInterface;
 use craft\db\Query;
 use craft\db\Table as TableName;
 use craft\elements\db\ElementQuery;
 use craft\elements\db\ElementQueryInterface;
 use craft\elements\db\MatrixBlockQuery;
 use craft\elements\MatrixBlock;
+use craft\elements\MatrixBlock as MatrixBlockElement;
 use craft\events\BlockTypesEvent;
+use craft\gql\arguments\elements\MatrixBlock as MatrixBlockArguments;
+use craft\gql\resolvers\elements\MatrixBlock as MatrixBlockResolver;
+use craft\gql\types\generators\MatrixBlockType as MatrixBlockTypeGenerator;
 use craft\helpers\ArrayHelper;
 use craft\helpers\Db;
 use craft\helpers\ElementHelper;
+use craft\helpers\Gql as GqlHelper;
 use craft\helpers\Json;
 use craft\helpers\StringHelper;
 use craft\models\MatrixBlockType;
@@ -31,6 +38,8 @@ use craft\services\Elements;
 use craft\validators\ArrayValidator;
 use craft\web\assets\matrix\MatrixAsset;
 use craft\web\assets\matrixsettings\MatrixSettingsAsset;
+use GraphQL\Type\Definition\Type;
+use yii\base\InvalidArgumentException;
 use yii\base\InvalidConfigException;
 use yii\base\UnknownPropertyException;
 
@@ -38,15 +47,16 @@ use yii\base\UnknownPropertyException;
  * Matrix represents a Matrix field.
  *
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
- * @since 3.0
+ * @since 3.0.0
  */
-class Matrix extends Field implements EagerLoadingFieldInterface
+class Matrix extends Field implements EagerLoadingFieldInterface, GqlInlineFragmentFieldInterface
 {
     // Constants
     // =========================================================================
 
     /**
      * @event SectionEvent The event that is triggered before a section is saved.
+     * @since 3.1.27
      */
     const EVENT_SET_FIELD_BLOCK_TYPES = 'setFieldBlockTypes';
 
@@ -114,7 +124,7 @@ class Matrix extends Field implements EagerLoadingFieldInterface
      * - `language` – Save blocks to other sites with the same language
      * - `all` – Save blocks to all sites supported by the owner element
      *
-     * @since 3.2
+     * @since 3.2.0
      */
     public $propagationMethod = self::PROPAGATION_METHOD_ALL;
 
@@ -525,14 +535,15 @@ class Matrix extends Field implements EagerLoadingFieldInterface
 
         if ($value === ':notempty:' || $value === ':empty:') {
             $ns = $this->handle . '_' . StringHelper::randomString(5);
-            $condition = ['exists', (new Query())
-                ->from(TableName::MATRIXBLOCKS . " matrixblocks_$ns")
-                ->innerJoin(TableName::ELEMENTS . " elements_$ns", "[[elements_$ns.id]] = [[matrixblocks_$ns.id]]")
-                ->where("[[matrixblocks_$ns.ownerId]] = [[elements.id]]")
-                ->andWhere([
-                    "matrixblocks_$ns.fieldId" => $this->id,
-                    "elements_$ns.dateDeleted" => null,
-                ])
+            $condition = [
+                'exists', (new Query())
+                    ->from(TableName::MATRIXBLOCKS . " matrixblocks_$ns")
+                    ->innerJoin(TableName::ELEMENTS . " elements_$ns", "[[elements_$ns.id]] = [[matrixblocks_$ns.id]]")
+                    ->where("[[matrixblocks_$ns.ownerId]] = [[elements.id]]")
+                    ->andWhere([
+                        "matrixblocks_$ns.fieldId" => $this->id,
+                        "elements_$ns.dateDeleted" => null,
+                    ])
             ];
 
             if ($value === ':notempty:') {
@@ -689,25 +700,14 @@ class Matrix extends Field implements EagerLoadingFieldInterface
         $contentService = Craft::$app->getContent();
 
         foreach ($value->all() as $block) {
-            $originalContentTable = $contentService->contentTable;
-            $originalFieldColumnPrefix = $contentService->fieldColumnPrefix;
-            $originalFieldContext = $contentService->fieldContext;
-
-            $contentService->contentTable = $block->getContentTable();
-            $contentService->fieldColumnPrefix = $block->getFieldColumnPrefix();
-            $contentService->fieldContext = $block->getFieldContext();
-
-            foreach (Craft::$app->getFields()->getAllFields() as $field) {
+            $fields = Craft::$app->getFields()->getAllFields($block->getFieldContext());
+            foreach ($fields as $field) {
                 /** @var Field $field */
                 if ($field->searchable) {
                     $fieldValue = $block->getFieldValue($field->handle);
                     $keywords[] = $field->getSearchKeywords($fieldValue, $element);
                 }
             }
-
-            $contentService->contentTable = $originalContentTable;
-            $contentService->fieldColumnPrefix = $originalFieldColumnPrefix;
-            $contentService->fieldContext = $originalFieldContext;
         }
 
         return parent::getSearchKeywords($keywords, $element);
@@ -764,8 +764,50 @@ class Matrix extends Field implements EagerLoadingFieldInterface
         return [
             'elementType' => MatrixBlock::class,
             'map' => $map,
-            'criteria' => ['fieldId' => $this->id]
+            'criteria' => [
+                'fieldId' => $this->id,
+                'allowOwnerDrafts' => true,
+                'allowOwnerRevisions' => true,
+            ]
         ];
+    }
+
+    /**
+     * @inheritdoc
+     * @since 3.3.0
+     */
+    public function getContentGqlType()
+    {
+        $typeArray = MatrixBlockTypeGenerator::generateTypes($this);
+        $typeName = $this->handle . '_MatrixField';
+        $resolver = function(MatrixBlockElement $value) {
+            return $value->getGqlTypeName();
+        };
+
+        return [
+            'name' => $this->handle,
+            'type' => Type::listOf(GqlHelper::getUnionType($typeName, $typeArray, $resolver)),
+            'args' => MatrixBlockArguments::getArguments(),
+            'resolve' => MatrixBlockResolver::class . '::resolve',
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     * @throws InvalidArgumentException
+     * @since 3.3.0
+     */
+    public function getGqlFragmentEntityByName(string $fragmentName): GqlInlineFragmentInterface
+    {
+        $blockTypeHandle = StringHelper::removeLeft(StringHelper::removeRight($fragmentName, '_BlockType'), $this->handle . '_');
+
+        $blockType = ArrayHelper::firstWhere($this->getBlockTypes(), 'handle', $blockTypeHandle);
+
+        if (!$blockType) {
+            throw new InvalidArgumentException('Invalid fragment name: ' . $fragmentName);
+        }
+
+        return $blockType;
     }
 
     // Events

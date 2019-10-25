@@ -1,6 +1,18 @@
 Yii Framework 2 debug extension Change Log
 ==========================================
 
+2.1.10 October 22, 2019
+-----------------------
+
+- Enh #412: Improved layout of the Logs panel (machour, pistej)
+
+
+2.1.9 September 18, 2019
+------------------------
+
+- Bug #409: Fixed "Since previous" column's value calculation (Ir00man)
+
+
 2.1.8 August 20, 2019
 ---------------------
 

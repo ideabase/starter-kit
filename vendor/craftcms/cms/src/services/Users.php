@@ -44,7 +44,7 @@ use yii\db\Exception as DbException;
  * An instance of the Users service is globally accessible in Craft via [[\craft\base\ApplicationTrait::getUsers()|`Craft::$app->users`]].
  *
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
- * @since 3.0
+ * @since 3.0.0
  */
 class Users extends Component
 {
@@ -619,12 +619,11 @@ class Users extends Component
 
         $userRecord = $this->_getUserRecordById($user->id);
         $userRecord->email = $user->unverifiedEmail;
+        $userRecord->unverifiedEmail = null;
 
         if (Craft::$app->getConfig()->getGeneral()->useEmailAsUsername) {
             $userRecord->username = $user->unverifiedEmail;
         }
-
-        $userRecord->unverifiedEmail = null;
 
         if (!$userRecord->save()) {
             $user->addErrors($userRecord->getErrors());
@@ -1066,7 +1065,7 @@ class Users extends Component
      * @param User $impersonator
      * @param User $impersonatee
      * @return bool
-     * @since 3.2
+     * @since 3.2.0
      */
     public function canImpersonate(User $impersonator, User $impersonatee): bool
     {

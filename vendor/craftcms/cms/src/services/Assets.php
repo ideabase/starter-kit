@@ -9,6 +9,7 @@ namespace craft\services;
 
 use Craft;
 use craft\base\Volume;
+use craft\base\VolumeInterface;
 use craft\db\Query;
 use craft\db\Table;
 use craft\elements\Asset;
@@ -48,7 +49,7 @@ use yii\base\NotSupportedException;
  * An instance of the Assets service is globally accessible in Craft via [[\craft\base\ApplicationTrait::getAssets()|`Craft::$app->assets`]].
  *
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
- * @since 3.0
+ * @since 3.0.0
  */
 class Assets extends Component
 {
@@ -241,11 +242,11 @@ class Assets extends Component
      *
      * @param int $folderId
      * @param string $newName
-     * @throws AssetConflictException If a folder already exists with such name in Assets Index
+     * @return string The new folder name after cleaning it.
      * @throws AssetLogicException If the folder to be renamed can't be found or trying to rename the top folder.
      * @throws VolumeObjectExistsException If a folder already exists with such name in the Volume, but not in Index
      * @throws VolumeObjectNotFoundException If the folder to be renamed can't be found in the Volume.
-     * @return string The new folder name after cleaning it.
+     * @throws AssetConflictException If a folder already exists with such name in Assets Index
      */
     public function renameFolderById(int $folderId, string $newName): string
     {
@@ -866,13 +867,14 @@ class Assets extends Component
      * Ensure a folder entry exists in the DB for the full path and return it's id. Depending on the use, it's possible to also ensure a physical folder exists.
      *
      * @param string $fullPath The path to ensure the folder exists at.
-     * @param Volume $volume
+     * @param VolumeInterface $volume
      * @param bool $justRecord If set to false, will also make sure the physical folder exists on Volume.
      * @return int
      * @throws VolumeException If the volume cannot be found.
      */
-    public function ensureFolderByFullPathAndVolume(string $fullPath, Volume $volume, bool $justRecord = true): int
+    public function ensureFolderByFullPathAndVolume(string $fullPath, VolumeInterface $volume, bool $justRecord = true): int
     {
+        /** @var Volume $volume */
         $parentId = Craft::$app->getVolumes()->ensureTopFolder($volume);
         $folderId = $parentId;
 

@@ -8,11 +8,9 @@
 namespace craft\services;
 
 use Craft;
-use craft\db\Query;
 use craft\db\Table;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
-use DateInterval;
 use yii\base\Component;
 
 /**
@@ -20,7 +18,7 @@ use yii\base\Component;
  * An instance of the GC service is globally accessible in Craft via [[\craft\base\ApplicationTrait::getGc()|`Craft::$app->gc`]].
  *
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
- * @since 3.1
+ * @since 3.1.0
  */
 class Gc extends Component
 {
@@ -127,7 +125,13 @@ class Gc extends Component
      */
     private function _deleteStaleSessions()
     {
-        $interval = new DateInterval('P3M');
+        $generalConfig = Craft::$app->getConfig()->getGeneral();
+
+        if ($generalConfig->purgeStaleUserSessionDuration === 0) {
+            return;
+        }
+
+        $interval = DateTimeHelper::secondsToInterval($generalConfig->purgeStaleUserSessionDuration);
         $expire = DateTimeHelper::currentUTCDateTime();
         $pastTime = $expire->sub($interval);
 

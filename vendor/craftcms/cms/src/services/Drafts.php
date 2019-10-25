@@ -11,13 +11,13 @@ use Craft;
 use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\behaviors\DraftBehavior;
-use craft\behaviors\RevisionBehavior;
 use craft\db\Query;
 use craft\db\Table;
 use craft\errors\InvalidElementException;
 use craft\events\DraftEvent;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
+use craft\helpers\ElementHelper;
 use yii\base\Component;
 use yii\base\InvalidArgumentException;
 use yii\db\Exception as DbException;
@@ -27,7 +27,7 @@ use yii\db\Exception as DbException;
  * An instance of the Drafts service is globally accessible in Craft via [[\craft\base\ApplicationTrait::getDrafts()|`Craft::$app->drafts`]].
  *
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
- * @since 3.2
+ * @since 3.2.0
  */
 class Drafts extends Component
 {
@@ -210,7 +210,7 @@ class Drafts extends Component
         /** @var DraftBehavior $behavior */
         $behavior = $draft->getBehavior('draft');
         /** @var Element $source */
-        $source = $draft->getSource();
+        $source = ElementHelper::sourceElement($draft);
 
         // Fire a 'beforeApplyDraft' event
         if ($this->hasEventHandlers(self::EVENT_BEFORE_APPLY_DRAFT)) {

@@ -23,7 +23,7 @@ use yii\helpers\FormatConverter;
  *
  * @property string $displayName The locale’s display name.
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
- * @since 3.0
+ * @since 3.0.0
  */
 class Locale extends BaseObject
 {
@@ -230,7 +230,7 @@ class Locale extends BaseObject
     /**
      * @var array The languages that use RTL orientation.
      */
-    private static $_rtlLanguages = ['ar', 'he', 'ur'];
+    private static $_rtlLanguages = ['ar', 'he', 'ur', 'fa'];
 
     /**
      * @var string|null The locale ID.

@@ -19,7 +19,7 @@ use yii\base\Exception;
  * Class ElementHelper
  *
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
- * @since 3.0
+ * @since 3.0.0
  */
 class ElementHelper
 {
@@ -58,7 +58,7 @@ class ElementHelper
     public static function createSlug(string $str): string
     {
         // Special case for the homepage
-        if ($str === '__home__') {
+        if ($str === Element::HOMEPAGE_URI) {
             return $str;
         }
 
@@ -90,7 +90,7 @@ class ElementHelper
     public static function setUniqueUri(ElementInterface $element)
     {
         /** @var Element $element */
-        $uriFormat = $element->getUriFormat();
+        $uriFormat = Craft::$app->getConfig()->getGeneral()->headlessMode ? null : $element->getUriFormat();
 
         // No URL format, no URI.
         if ($uriFormat === null) {
@@ -221,9 +221,11 @@ class ElementHelper
         }
 
         if (($sourceId = $element->getSourceId()) !== null) {
-            $query->andWhere(['not', [
-                'elements.id' => $sourceId,
-            ]]);
+            $query->andWhere([
+                'not', [
+                    'elements.id' => $sourceId,
+                ]
+            ]);
         }
 
         return (int)$query->count() === 0;
@@ -326,6 +328,7 @@ class ElementHelper
      *
      * @param ElementInterface $element
      * @return ElementInterface
+     * @since 3.2.0
      */
     public static function rootElement(ElementInterface $element): ElementInterface
     {
@@ -340,12 +343,36 @@ class ElementHelper
      *
      * @param ElementInterface $element
      * @return bool
+     * @since 3.2.0
      */
     public static function isDraftOrRevision(ElementInterface $element): bool
     {
         /** @var Element $root */
         $root = ElementHelper::rootElement($element);
         return $root->getIsDraft() || $root->getIsRevision();
+    }
+
+    /**
+     * Returns the element, or if it’s a draft/revision, the source element.
+     *
+     * @param ElementInterface $element
+     * @return ElementInterface
+     * @since 3.3.0
+     */
+    public static function sourceElement(ElementInterface $element): ElementInterface
+    {
+        /** @var Element $element */
+        $sourceId = $element->getSourceId();
+        if ($sourceId === $element->id) {
+            return $element;
+        }
+
+        return $element::find()
+            ->id($sourceId)
+            ->siteId($element->siteId)
+            ->anyStatus()
+            ->ignorePlaceholders()
+            ->one();
     }
 
     /**

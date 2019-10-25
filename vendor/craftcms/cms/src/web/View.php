@@ -29,6 +29,7 @@ use Twig\Extension\CoreExtension;
 use Twig\Extension\DebugExtension;
 use Twig\Extension\ExtensionInterface;
 use Twig\Extension\StringLoaderExtension;
+use Twig\Template as TwigTemplate;
 use yii\base\Arrayable;
 use yii\base\Exception;
 use yii\base\Model;
@@ -50,7 +51,7 @@ use yii\web\AssetBundle as YiiAssetBundle;
  * @property-write string[] $registeredAssetBundles the asset bundle names that should be marked as already registered
  * @property-write string[] $registeredJsFiles the JS files that should be marked as already registered
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
- * @since 3.0
+ * @since 3.0.0
  */
 class View extends \yii\web\View
 {
@@ -338,7 +339,6 @@ class View extends \yii\web\View
         // Render and return
         $renderingTemplate = $this->_renderingTemplate;
         $this->_renderingTemplate = $template;
-        Craft::beginProfile($template, __METHOD__);
 
         try {
             $output = $this->getTwig()->render($template, $variables);
@@ -350,7 +350,6 @@ class View extends \yii\web\View
             throw $e;
         }
 
-        Craft::endProfile($template, __METHOD__);
         $this->_renderingTemplate = $renderingTemplate;
 
         $this->afterRenderTemplate($template, $variables, $output);
@@ -442,19 +441,45 @@ class View extends \yii\web\View
      *
      * @param string $template The source template string.
      * @param array $variables Any variables that should be available to the template.
+     * @param string $templateMode The template mode to use.
      * @return string The rendered template.
      * @throws TwigLoaderError
      * @throws TwigSyntaxError
      */
-    public function renderString(string $template, array $variables = []): string
+    public function renderString(string $template, array $variables = [], string $templateMode = self::TEMPLATE_MODE_SITE): string
     {
+        // If there are no dynamic tags, just return the template
+        if (strpos($template, '{') === false) {
+            return $template;
+        }
+
+        $oldTemplateMode = $this->templateMode;
+        $this->setTemplateMode($templateMode);
+
         $twig = $this->getTwig();
         $twig->setDefaultEscaperStrategy(false);
         $lastRenderingTemplate = $this->_renderingTemplate;
         $this->_renderingTemplate = 'string:' . $template;
-        $result = $twig->createTemplate($template)->render($variables);
+
+        $e = null;
+        try {
+            $result = $twig->createTemplate($template)->render($variables);
+        } catch (\Throwable $e) {
+            // throw it later
+        }
+
         $this->_renderingTemplate = $lastRenderingTemplate;
         $twig->setDefaultEscaperStrategy();
+        $this->setTemplateMode($oldTemplateMode);
+
+        if ($e !== null) {
+            if (!YII_DEBUG) {
+                // Throw a generic exception instead
+                throw new Exception('An error occurred when rendering a template.', 0, $e);
+            }
+            throw $e;
+        }
+
         return $result;
     }
 
@@ -472,52 +497,21 @@ class View extends \yii\web\View
      * @param string $template the source template string
      * @param mixed $object the object that should be passed into the template
      * @param array $variables any additional variables that should be available to the template
+     * @param string $templateMode The template mode to use.
      * @return string The rendered template.
      * @throws Exception in case of failure
      * @throws \Throwable in case of failure
      */
-    public function renderObjectTemplate(string $template, $object, array $variables = []): string
+    public function renderObjectTemplate(string $template, $object, array $variables = [], string $templateMode = self::TEMPLATE_MODE_SITE): string
     {
         // If there are no dynamic tags, just return the template
         if (strpos($template, '{') === false) {
             return $template;
         }
 
+        $oldTemplateMode = $this->templateMode;
+        $this->setTemplateMode($templateMode);
         $twig = $this->getTwig();
-
-        // Is this the first time we've parsed this template?
-        $cacheKey = md5($template);
-        if (!isset($this->_objectTemplates[$cacheKey])) {
-            // Replace shortcut "{var}"s with "{{object.var}}"s, without affecting normal Twig tags
-            $template = $this->normalizeObjectTemplate($template);
-            $this->_objectTemplates[$cacheKey] = $twig->createTemplate($template);
-        }
-
-        // Get the variables to pass to the template
-        if ($object instanceof Model) {
-            foreach ($object->attributes() as $name) {
-                if (!isset($variables[$name]) && strpos($template, $name) !== false) {
-                    $variables[$name] = $object->$name;
-                }
-            }
-        }
-
-        if ($object instanceof Arrayable) {
-            // See if we should be including any of the extra fields
-            $extra = [];
-            foreach ($object->extraFields() as $field => $definition) {
-                if (is_int($field)) {
-                    $field = $definition;
-                }
-                if (strpos($template, $field) !== false) {
-                    $extra[] = $field;
-                }
-            }
-            $variables = array_merge($object->toArray([], $extra, false), $variables);
-        }
-
-        $variables['object'] = $object;
-        $variables['_variables'] = $variables;
 
         // Temporarily disable strict variables if it's enabled
         $strictVariables = $twig->isStrictVariables();
@@ -526,21 +520,57 @@ class View extends \yii\web\View
             $twig->disableStrictVariables();
         }
 
-        // Render it!
         $twig->setDefaultEscaperStrategy(false);
         $lastRenderingTemplate = $this->_renderingTemplate;
         $this->_renderingTemplate = 'string:' . $template;
-        /** @var Template $templateObj */
-        $templateObj = $this->_objectTemplates[$cacheKey];
 
         $e = null;
         try {
+            // Is this the first time we've parsed this template?
+            $cacheKey = md5($template);
+            if (!isset($this->_objectTemplates[$cacheKey])) {
+                // Replace shortcut "{var}"s with "{{object.var}}"s, without affecting normal Twig tags
+                $template = $this->normalizeObjectTemplate($template);
+                $this->_objectTemplates[$cacheKey] = $twig->createTemplate($template);
+            }
+
+            // Get the variables to pass to the template
+            if ($object instanceof Model) {
+                foreach ($object->attributes() as $name) {
+                    if (!isset($variables[$name]) && strpos($template, $name) !== false) {
+                        $variables[$name] = $object->$name;
+                    }
+                }
+            }
+
+            if ($object instanceof Arrayable) {
+                // See if we should be including any of the extra fields
+                $extra = [];
+                foreach ($object->extraFields() as $field => $definition) {
+                    if (is_int($field)) {
+                        $field = $definition;
+                    }
+                    if (strpos($template, $field) !== false) {
+                        $extra[] = $field;
+                    }
+                }
+                $variables = array_merge($object->toArray([], $extra, false), $variables);
+            }
+
+            $variables['object'] = $object;
+            $variables['_variables'] = $variables;
+
+            // Render it!
+            /** @var TwigTemplate $templateObj */
+            $templateObj = $this->_objectTemplates[$cacheKey];
             $output = $templateObj->render($variables);
         } catch (\Throwable $e) {
+            // throw it later
         }
 
         $this->_renderingTemplate = $lastRenderingTemplate;
         $twig->setDefaultEscaperStrategy();
+        $this->setTemplateMode($oldTemplateMode);
 
         // Re-enable strict variables
         if ($strictVariables) {
@@ -1284,6 +1314,7 @@ JS;
      * Sets the JS files that should be marked as already registered.
      *
      * @param string[] $keys
+     * @since 3.0.10
      */
     public function setRegisteredJsFiles(array $keys)
     {
@@ -1294,6 +1325,7 @@ JS;
      * Sets the asset bundle names that should be marked as already registered.
      *
      * @param string[] $names Asset bundle names
+     * @since 3.0.10
      */
     public function setRegisteredAssetBundles(array $names)
     {
@@ -1578,12 +1610,22 @@ JS;
         }
 
         $this->_twigOptions = [
-            'base_template_class' => Template::class,
             // See: https://github.com/twigphp/Twig/issues/1951
             'cache' => Craft::$app->getPath()->getCompiledTemplatesPath(),
             'auto_reload' => true,
             'charset' => Craft::$app->charset,
         ];
+
+        $generalConfig = Craft::$app->getConfig()->getGeneral();
+
+        // Only load our custom Template class if they still have suppressTemplateErrors enabled
+        if ($generalConfig->suppressTemplateErrors) {
+            $this->_twigOptions['base_template_class'] = Template::class;
+        }
+
+        if ($generalConfig->headlessMode && Craft::$app->getRequest()->getIsSiteRequest()) {
+            $this->_twigOptions['autoescape'] = 'js';
+        }
 
         if (YII_DEBUG) {
             $this->_twigOptions['debug'] = true;

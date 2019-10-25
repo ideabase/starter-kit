@@ -193,11 +193,11 @@ class Field extends \craft\base\Field
         }
 
         $paths = self::redactorPluginPaths();
+        $view = Craft::$app->getView();
 
         foreach ($paths as $registeredPath) {
             foreach (["{$registeredPath}/{$plugin}", $registeredPath] as $path) {
                 if (file_exists("{$path}/{$plugin}.js")) {
-                    $view = Craft::$app->getView();
                     $baseUrl = Craft::$app->getAssetManager()->getPublishedUrl($path, true);
                     $view->registerJsFile("{$baseUrl}/{$plugin}.js", [
                         'depends' => RedactorAsset::class
@@ -296,7 +296,8 @@ class Field extends \craft\base\Field
         }
 
         // Prevent everyone from having to use the |raw filter when outputting RTE content
-        return new FieldData($value);
+        /** @var Element|null $element */
+        return new FieldData($value, $element->siteId ?? null);
     }
 
     /**
@@ -308,10 +309,10 @@ class Field extends \craft\base\Field
         /** @var Element $element */
 
         // register the asset/redactor bundles
-        Craft::$app->getView()->registerAssetBundle(FieldAsset::class);
+        $view = Craft::$app->getView();
+        $view->registerAssetBundle(FieldAsset::class);
 
         // figure out which language we ended up with
-        $view = Craft::$app->getView();
         /** @var RedactorAsset $bundle */
         $bundle = $view->getAssetManager()->getBundle(RedactorAsset::class);
         $redactorLang = $bundle::$redactorLanguage ?? 'en';
@@ -356,6 +357,9 @@ class Field extends \craft\base\Field
 
             // Swap any <!--pagebreak-->'s with <hr>'s
             $value = str_replace('<!--pagebreak-->', '<hr class="redactor_pagebreak" style="display:none" unselectable="on" contenteditable="false" />', $value);
+
+            // Remove newlines to avoid pointless page unload confirmations
+            $value = preg_replace('/[\r\n]/', '', $value);
         }
 
         return '<textarea id="'.$id.'" name="'.$this->handle.'" style="display: none">'.htmlentities($value, ENT_NOQUOTES, 'UTF-8').'</textarea>';

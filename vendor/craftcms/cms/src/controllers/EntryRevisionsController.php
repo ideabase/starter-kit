@@ -11,7 +11,6 @@ use Craft;
 use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\behaviors\DraftBehavior;
-use craft\behaviors\RevisionBehavior;
 use craft\elements\Entry;
 use craft\errors\InvalidElementException;
 use craft\helpers\ArrayHelper;
@@ -32,7 +31,7 @@ use yii\web\ServerErrorHttpException;
  * Note that all actions in the controller require an authenticated Craft session via [[allowAnonymous]].
  *
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
- * @since 3.0
+ * @since 3.0.0
  */
 class EntryRevisionsController extends BaseEntriesController
 {
@@ -125,7 +124,7 @@ class EntryRevisionsController extends BaseEntriesController
         // Save it and redirect to its edit page
         $entry->setScenario(Element::SCENARIO_ESSENTIALS);
         if (!Craft::$app->getDrafts()->saveElementAsDraft($entry, Craft::$app->getUser()->getId())) {
-            throw new Exception('Unable to save entry');
+            throw new Exception('Unable to save entry as a draft: ' . implode(', ', $entry->getErrorSummary(true)));
         }
 
         return $this->redirect(UrlHelper::url($entry->getCpEditUrl(), [
@@ -155,7 +154,8 @@ class EntryRevisionsController extends BaseEntriesController
         // Are we creating a new entry too?
         if (!$draftId && !$entryId) {
             $entry = new Entry();
-            $entry->sectionId = $request->getBodyParam('entryId');
+            $entry->siteId = $siteId;
+            $entry->sectionId = $request->getBodyParam('sectionId');
             $this->_setDraftAttributesFromPost($entry);
             $this->enforceEditEntryPermissions($entry);
             $entry->setFieldValuesFromRequest($fieldsLocation);
@@ -258,6 +258,7 @@ class EntryRevisionsController extends BaseEntriesController
                 'docTitle' => $this->docTitle($draft),
                 'title' => $this->pageTitle($draft),
                 'duplicatedElements' => $elementsService::$duplicatedElementIds,
+                'previewTargets' => $draft->getPreviewTargets(),
             ]);
         }
 
@@ -334,9 +335,9 @@ class EntryRevisionsController extends BaseEntriesController
 
         // Permission enforcement
         /** @var Entry|null $entry */
-        $entry = $draft->getSource();
+        $entry = ElementHelper::sourceElement($draft);
         $this->enforceEditEntryPermissions($entry);
-        $section = ($entry)->getSection();
+        $section = $entry->getSection();
 
         // Is this another user's entry (and it's not a Single)?
         $userId = Craft::$app->getUser()->getId();
@@ -428,7 +429,7 @@ class EntryRevisionsController extends BaseEntriesController
 
         // Permission enforcement
         /** @var Entry $entry */
-        $entry = $revision->getSource();
+        $entry = ElementHelper::sourceElement($revision);
 
         $this->enforceEditEntryPermissions($entry);
         $userId = Craft::$app->getUser()->getId();

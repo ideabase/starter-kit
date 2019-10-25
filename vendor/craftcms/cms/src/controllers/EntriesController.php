@@ -31,7 +31,7 @@ use yii\web\ServerErrorHttpException;
  * swapping between entry types, and deleting entries.
  *
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
- * @since 3.0
+ * @since 3.0.0
  */
 class EntriesController extends BaseEntriesController
 {
@@ -253,9 +253,9 @@ class EntriesController extends BaseEntriesController
 
         // Can the user delete the entry?
         $variables['canDeleteSource'] = $section->type !== Section::TYPE_SINGLE && (
-            ($entry->authorId == $currentUser->id && $currentUser->can('deleteEntries' . $variables['permissionSuffix'])) ||
-            ($entry->authorId != $currentUser->id && $currentUser->can('deletePeerEntries' . $variables['permissionSuffix']))
-        );
+                ($entry->authorId == $currentUser->id && $currentUser->can('deleteEntries' . $variables['permissionSuffix'])) ||
+                ($entry->authorId != $currentUser->id && $currentUser->can('deletePeerEntries' . $variables['permissionSuffix']))
+            );
 
         // Render the template!
         return $this->renderTemplate('entries/_edit', $variables);
@@ -320,6 +320,7 @@ class EntriesController extends BaseEntriesController
         // Is this another user's entry (and it's not a Single)?
         if (
             $entry->id &&
+            !$duplicate &&
             $entry->authorId != $currentUser->id &&
             $entry->getSection()->type !== Section::TYPE_SINGLE &&
             $entry->enabled
@@ -559,7 +560,6 @@ class EntriesController extends BaseEntriesController
             } else if (!empty($variables['revisionId'])) {
                 $variables['entry'] = Entry::find()
                     ->revisionId($variables['revisionId'])
-                    ->structureId($structureId)
                     ->structureId($structureId)
                     ->siteId($site->id)
                     ->anyStatus()

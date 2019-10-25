@@ -8,17 +8,17 @@
 namespace craft\console\controllers;
 
 use Craft;
+use craft\console\Controller;
 use craft\db\Table;
 use craft\helpers\Console;
 use craft\services\Plugins;
-use craft\console\Controller;
 use yii\console\ExitCode;
 
 /**
  * Manages the Project Config.
  *
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
- * @since 3.1
+ * @since 3.1.0
  */
 class ProjectConfigController extends Controller
 {
@@ -36,7 +36,7 @@ class ProjectConfigController extends Controller
     {
         if (!Craft::$app->getConfig()->getGeneral()->useProjectConfigFile) {
             $this->stdout('Craft is not configured to use project.yaml. Please enable the \'useProjectConfigFile\' config setting in config/general.php.' . PHP_EOL, Console::FG_YELLOW);
-            return ExitCode::OK;
+            return ExitCode::UNSPECIFIED_ERROR;
         }
 
         $updatesService = Craft::$app->getUpdates();
@@ -62,7 +62,7 @@ class ProjectConfigController extends Controller
             }
 
             $this->stderr(PHP_EOL . 'Try running `composer install` from your terminal to resolve.' . PHP_EOL, Console::FG_YELLOW);
-            return ExitCode::OK;
+            return ExitCode::UNSPECIFIED_ERROR;
         }
 
         // Do we need to create a new config file?
@@ -101,6 +101,7 @@ class ProjectConfigController extends Controller
      * Rebuilds the project config.
      *
      * @return int
+     * @since 3.1.20
      */
     public function actionRebuild(): int
     {

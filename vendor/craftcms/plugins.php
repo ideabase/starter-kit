@@ -1,6 +1,7 @@
 <?php
 
 $vendorDir = dirname(__DIR__);
+$rootDir = dirname(dirname(__DIR__));
 
 return array (
   'craftcms/redactor' => 
@@ -13,7 +14,7 @@ return array (
       '@craft/redactor' => $vendorDir . '/craftcms/redactor/src',
     ),
     'name' => 'Redactor',
-    'version' => '2.3.3.2',
+    'version' => '2.4.0',
     'description' => 'Edit rich text content in Craft CMS using Redactor by Imperavi.',
     'developer' => 'Pixel & Tonic',
     'developerUrl' => 'https://pixelandtonic.com/',

@@ -46,6 +46,9 @@ echo GridView::widget([
         [
             'attribute' => 'id',
             'label' => '#',
+            'contentOptions' => [
+                'class' => 'word-break-keep'
+            ]
         ],
         [
             'attribute' => 'time',
@@ -57,29 +60,23 @@ echo GridView::widget([
             },
             'headerOptions' => [
                 'class' => 'sort-numerical'
+            ],
+            'contentOptions' => [
+                'class' => 'word-break-keep'
             ]
         ],
         [
             'attribute' => 'time_since_previous',
             'value' => static function ($data) {
-                $timeOfPrevious = $data['time_of_previous'] / 1000;
-                if (strpos($timeOfPrevious, '.') === false) {
-                    $timeOfPrevious .= '.0';
-                }
-                $time = $data['time'] / 1000;
-                if (strpos($time, '.') === false) {
-                    $time .= '.0';
-                }
-                $previousDateTime = \DateTime::createFromFormat('U.u', $timeOfPrevious);
-                $thisDateTime = \DateTime::createFromFormat('U.u', $time);
+                $diffInMs = $data['time'] - $data['time_of_previous'];
+                $diffInSeconds = $diffInMs / 1000;
+                $diffInMinutes = $diffInSeconds / 60;
+                $diffInHours = $diffInMinutes / 60;
 
-                $diffInSeconds = ($data['time'] - $data['time_of_previous']) / 1000;
-                $diffInMs = (int) (($diffInSeconds - (int) $diffInSeconds) * 1000);
-
-                $diff = $thisDateTime->diff($previousDateTime);
-                $diffHours = (int) $diff->format('%h');
-                $diffMinutes = (int) $diff->format('%i');
-                $diffSeconds = (int) $diff->format('%s');
+                $diffMs = $diffInMs % 1000;
+                $diffSeconds = $diffInSeconds % 60;
+                $diffMinutes = $diffInMinutes % 60;
+                $diffHours = (int)$diffInHours;
 
                 $formattedDiff = [];
                 if ($diffHours > 0) {
@@ -91,41 +88,26 @@ echo GridView::widget([
                 if ($diffSeconds > 0) {
                     $formattedDiff[] = $diffSeconds . 's';
                 }
-                $formattedDiff[] = $diffInMs . 'ms';
+                $formattedDiff[] = $diffMs . 'ms';
                 $formattedDiff = implode('&nbsp;', $formattedDiff);
 
-                $previousBtnOptions = [
-                    'class' => 'btn btn-light',
-                ];
-                $nextBtnOptions = [
-                    'class' => 'btn btn-light',
-                ];
                 if ($data['id_of_previous'] === null) {
-                    Html::addCssClass($previousBtnOptions, 'disabled');
+                    $previous = Html::tag('span', '< ', ['class' => 'button']);
+                } else {
+                    $previous = Html::a('< ', '#log-' . $data['id_of_previous'], ['class' => 'button']);
                 }
+
                 if ($data['id_of_next'] === null) {
-                    Html::addCssClass($nextBtnOptions, 'disabled');
+                    $next = Html::tag('span', ' >', ['class' => 'button']);
+                } else {
+                    $next = Html::a(' >', '#log-' . $data['id_of_next'], ['class' => 'button']);
                 }
 
                 return
-                    '<div class="btn-group" role="group">' .
-                    Html::a(
-                        '◀',
-                        '#log-' . $data['id_of_previous'],
-                        $previousBtnOptions
-                    ) .
-                    Html::a(
-                        $formattedDiff,
-                        '#log-' . $data['id'],
-                        [
-                            'class' => 'btn btn-light',
-                        ]
-                    ) .
-                    Html::a(
-                        '▶',
-                        '#log-' . $data['id_of_next'],
-                        $nextBtnOptions
-                    ) .
+                    '<div class="since-previous">' .
+                    $previous .
+                    $formattedDiff .
+                    $next .
                     '</div>';
             },
             'format' => 'raw',
