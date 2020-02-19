@@ -1,6 +1,6 @@
 var gulp = require('gulp');
 var sourcemaps = require('gulp-sourcemaps');
-var uglify = require('gulp-uglify');
+var uglify = require('gulp-uglify-es').default;
 var rename = require('gulp-rename');
 var sass = require('gulp-sass');
 var cleanCSS = require('gulp-clean-css');
@@ -106,11 +106,6 @@ gulp.task('field-css', function() {
         .pipe(cleanCSS())
         .pipe(rename({ suffix: '.min' }))
         .pipe(gulp.dest(fieldPath+'/css'));
-});
-
-gulp.task('craft-sass', function() {
-    return gulp.src('node_modules/craftcms-sass/src/_mixins.scss')
-        .pipe(gulp.dest('lib/craftcms-sass'));
 });
 
 gulp.task('redactor', ['redactor-js', 'redactor-css']);

@@ -19,7 +19,8 @@ var plugin = $.extend({}, Craft.Redactor.PluginBase, {
             this[modalProperty] = Craft.createElementSelectorModal(arguments.elementType, {
                 storageKey: 'RedactorInput.LinkTo.' + arguments.elementType,
                 sources: arguments.sources,
-                criteria: $.extend({siteId: this.elementSiteId}, arguments.criteria),
+                criteria: arguments.criteria,
+                defaultSiteId: this.elementSiteId,
                 onSelect: $.proxy(function(elements) {
                     if (elements.length) {
                         if (this.app.selectionMarkers) {
@@ -33,7 +34,7 @@ var plugin = $.extend({}, Craft.Redactor.PluginBase, {
                         var element = elements[0],
                             selection = this.app.selection.getText(),
                             data = {
-                                url: element.url + '#' + refHandle + ':' + element.id,
+                                url: element.url + '#' + refHandle + ':' + element.id + '@' + element.siteId,
                                 text: selection.length > 0 ? selection : element.label
                             };
                         this.app.api('module.link.insert', data);

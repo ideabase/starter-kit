@@ -11,6 +11,7 @@ use Codeception\Test\Unit;
 use Craft;
 use craft\elements\Asset;
 use craft\gql\directives\FormatDateTime;
+use craft\gql\directives\Markdown;
 use craft\gql\directives\Transform;
 use craft\gql\GqlEntityRegistry;
 use craft\gql\types\elements\Asset as GqlAssetType;
@@ -36,9 +37,6 @@ class DirectiveTest extends Unit
     protected function _after()
     {
     }
-
-    // Tests
-    // =========================================================================
 
     /**
      * Test directives
@@ -138,13 +136,11 @@ class DirectiveTest extends Unit
         $this->assertEquals($asset->filename, $type->resolveWithDirectives($asset, [], null, $resolveInfo));
     }
 
-    // Data Providers
-    // =========================================================================
-
     public function directiveDataProvider()
     {
         $mockDirective = MockDirective::class;
         $formatDateTime = FormatDateTime::class;
+        $markDownDirective = Markdown::class;
 
         $dateTime = new DateTime('now');
 
@@ -166,6 +162,9 @@ class DirectiveTest extends Unit
             [$dateTime, [$this->_buildDirective($formatDateTime, $dateTimeParameters[2])], $dateTime->setTimezone(new \DateTimeZone($dateTimeParameters[2]['timezone']))->format($dateTimeParameters[2]['format'])],
             [$dateTime, [$this->_buildDirective($formatDateTime, $dateTimeParameters[3])], $dateTime->setTimezone(new \DateTimeZone($dateTimeParameters[3]['timezone']))->format($dateTimeParameters[3]['format'])],
             ['what time is it?', [$this->_buildDirective($formatDateTime, $dateTimeParameters[2])], 'what time is it?'],
+
+            // Markdown
+            ["Some *string*", [$this->_buildDirective($markDownDirective, [])], "<p>Some <em>string</em></p>\n"],
         ];
     }
 

@@ -16,13 +16,10 @@ Craft::$app->requireEdition(Craft::Pro);
  *
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @since 3.0.0
- * @deprecated in 3.0
+ * @deprecated in 3.0.0
  */
 class UserPermissions
 {
-    // Public Methods
-    // =========================================================================
-
     /**
      * Returns all of the known permissions, sorted by category.
      *

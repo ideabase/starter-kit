@@ -1,5 +1,91 @@
 # Changelog
 
+### 5.4.39 (2020-01-30)
+
+- "GRAPHEME_CLUSTER_RX" -> is not used anymore and is now deprecated
+- fix "UTF8::decode_mimeheader" fallback -> now we always use the symfony polyfill (mb_decode_mimeheader has different results)
+- fix "UTF8::get_unique_string()" -> use "mt_rand" as fallback
+- fix "UTF8::strtr()" -> now it works also with arrays
+- fix phpdoc for "UTF8::normalize_line_ending()"
+- fix phpdoc for "UTF8::split()" & "UTF8::str_split()"
+- add "UTF8::str_split_array()"
+- add "UTF8::stripos_in_byte()"
+- add many new tests
+- optimize "UTF8::is_url()" + fix deprecated php (>= 7.3) constants
+- optimize "UTF8::str_limit_after_word()" -> optimize the regex
+- optimize "UTF8::substr()" -> combine "if"-statements
+- optimize "UTF8::str_capitalize_name_helper()" -> performance -> use break
+- code style: fix for "UTF8::filter()"
+- code style: do not use "=== false" | "=== true" for "bool" types
+
+### 5.4.38 (2020-01-14)
+
+- add "UTF8::is_url()"
+
+### 5.4.37 (2019-12-30)
+
+- fix nesting function error from "UTF8::substr()"
+
+### 5.4.36 (2019-12-30)
+
+- add "is_punctuation()" && "is_printable()"
+
+### 5.4.35 (2019-12-27)
+
+- add "UTF8::to_int()" && "UTF8::to_string()"
+
+### 5.4.34 (2019-12-19)
+
+- use "@psalm-pure"
+
+### 5.4.33 (2019-12-18)
+
+- use "@psalm-immutable"
+
+### 5.4.32 (2019-12-13)
+
+- fix "UTF8::str_contains_all" -> "strpos(): Empty needle"
+
+### 5.4.31 (2019-12-13)
+
+- update vendor (ASCII) lib
+- optimize phpstan config
+
+### 5.4.30 (2019-12-04)
+
+- fix "UTF8::str_contains_all" -> fix the loop
+
+### 5.4.29 (2019-12-02)
+
+- add "UTF8::has_whitespace()"
+
+### 5.4.28 (2019-11-17)
+
+- use "mb_str_split" with PHP >= 7.4 + mbstring support (performance++)
+- improve performance from "UTF8::string()" (use UTF8::html_entity_decode() for the full string)
+- fix errors reported by phpstan (level 7) / psalm
+
+### 5.4.27 (2019-11-11)
+
+- "UTF8::clean() / UTF8::cleanup()" -> do not remove invisible urlencoded strings by default
+
+      -> problem with e.g. pdf content: "%1b;" -> ...p(CRnAYOD*9a1>VAk^mH%1b;?ZVuX$`P[%...
+
+### 5.4.26 (2019-11-05)
+
+- disable "Bootup::filterRequestUri()" && "Bootup::filterRequestInputs()" by default
+      
+      Since version 5.4.26 this library will NOT force "UTF-8" by "bootstrap.php" anymore.
+      If you need to enable this behavior you can define "PORTABLE_UTF8__ENABLE_AUTO_FILTER", 
+      before requiring the autoloader.
+      
+      ```
+      define('PORTABLE_UTF8__ENABLE_AUTO_FILTER', 1);
+      ```
+      
+      Before version 5.4.26 this behavior was enabled by default and you could disable it via "PORTABLE_UTF8__DISABLE_AUTO_FILTER", but the code had potential security vulnerabilities via injecting code while redirecting via ```header('Location ...```.
+      This is the reason I decided to add this BC in a bug fix release, so that everybody using the current version will receive the security-fix.
+
 ### 5.4.25 (2019-10-14)
 
 - update vendor (ASCII) lib

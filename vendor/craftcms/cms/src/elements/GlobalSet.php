@@ -27,9 +27,6 @@ use craft\validators\UniqueValidator;
  */
 class GlobalSet extends Element
 {
-    // Static
-    // =========================================================================
-
     /**
      * @inheritdoc
      */
@@ -41,9 +38,25 @@ class GlobalSet extends Element
     /**
      * @inheritdoc
      */
+    public static function lowerDisplayName(): string
+    {
+        return Craft::t('app', 'global set');
+    }
+
+    /**
+     * @inheritdoc
+     */
     public static function pluralDisplayName(): string
     {
         return Craft::t('app', 'Global Sets');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function pluralLowerDisplayName(): string
+    {
+        return Craft::t('app', 'global sets');
     }
 
     /**
@@ -107,9 +120,6 @@ class GlobalSet extends Element
         return ['globalsets.' . $context->uid];
     }
 
-    // Properties
-    // =========================================================================
-
     /**
      * @var string|null Name
      */
@@ -119,9 +129,6 @@ class GlobalSet extends Element
      * @var string|null Handle
      */
     public $handle;
-
-    // Public Methods
-    // =========================================================================
 
     /**
      * Use the global set's name as its string representation.
@@ -141,7 +148,7 @@ class GlobalSet extends Element
         $behaviors = parent::behaviors();
         $behaviors['fieldLayout'] = [
             'class' => FieldLayoutBehavior::class,
-            'elementType' => __CLASS__
+            'elementType' => __CLASS__,
         ];
         return $behaviors;
     }
@@ -149,9 +156,9 @@ class GlobalSet extends Element
     /**
      * @inheritdoc
      */
-    public function rules()
+    protected function defineRules(): array
     {
-        $rules = parent::rules();
+        $rules = parent::defineRules();
         $rules[] = [['fieldLayoutId'], 'number', 'integerOnly' => true];
         $rules[] = [['name', 'handle'], 'string', 'max' => 255];
         $rules[] = [['name', 'handle'], 'required'];

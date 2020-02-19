@@ -27,9 +27,6 @@ use yii\helpers\FormatConverter;
  */
 class Locale extends BaseObject
 {
-    // Constants
-    // =========================================================================
-
     /**
      * @var int Positive prefix.
      */
@@ -224,9 +221,6 @@ class Locale extends BaseObject
      */
     const FORMAT_JUI = 'jui';
 
-    // Properties
-    // =========================================================================
-
     /**
      * @var array The languages that use RTL orientation.
      */
@@ -246,9 +240,6 @@ class Locale extends BaseObject
      * @var Formatter|null The locale's formatter.
      */
     private $_formatter;
-
-    // Public Methods
-    // =========================================================================
 
     /**
      * Constructor.
@@ -840,7 +831,7 @@ class Locale extends BaseObject
      * Returns the locale ID.
      *
      * @return string
-     * @deprecated in 3.0. Use id instead.
+     * @deprecated in 3.0.0. Use id instead.
      */
     public function getId(): string
     {
@@ -854,7 +845,7 @@ class Locale extends BaseObject
      *
      * @param string|null $targetLocaleId
      * @return string|null
-     * @deprecated in 3.0. Use getDisplayName() instead.
+     * @deprecated in 3.0.0. Use getDisplayName() instead.
      */
     public function getName(string $targetLocaleId = null)
     {
@@ -872,7 +863,7 @@ class Locale extends BaseObject
      * Returns the locale name in its own language.
      *
      * @return string|false
-     * @deprecated in 3.0. Use getDisplayName() instead.
+     * @deprecated in 3.0.0. Use getDisplayName() instead.
      */
     public function getNativeName()
     {
@@ -880,9 +871,6 @@ class Locale extends BaseObject
 
         return $this->getDisplayName();
     }
-
-    // Private Methods
-    // =========================================================================
 
     /**
      * Returns a localized date/time format.
@@ -954,15 +942,10 @@ class Locale extends BaseObject
             $formatter = new IntlDateFormatter($this->id, $dateType, $timeType);
             $pattern = $formatter->getPattern();
 
-            // Use 4-digit year, and no leading zeroes on days/months
+            // Use 4-digit years
             return strtr($pattern, [
                 'yyyy' => 'yyyy',
                 'yy' => 'yyyy',
-                'MMMMM' => 'MMMMM',
-                'MMMM' => 'MMMM',
-                'MMM' => 'MMM',
-                'MM' => 'M',
-                'dd' => 'd',
             ]);
         }
 

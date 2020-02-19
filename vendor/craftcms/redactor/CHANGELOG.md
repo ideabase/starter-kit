@@ -1,5 +1,41 @@
 # Release Notes for Redactor for Craft CMS
 
+## 2.6.0.1 - 2020-02-14
+
+### Fixed
+- Fixed a bug where the editor would not show any buttons when the default Redactor config was used. ([#208](https://github.com/craftcms/redactor/issues/208))
+
+## 2.6.0 - 2020-02-13
+
+### Added
+- Added support for Redactor’s `buttonsAddFirst`, `buttonsAddBefore`, `buttonsAddAfter`, and `buttonsAdd` config settings. ([#158](https://github.com/craftcms/redactor/issues/158))
+- Added the “Show unpermitted volumes” setting, which determines whether the field should show volumes that the user doesn’t have permission to view (disabled by default for new fields; enabled by default for existing fields). ([#203](https://github.com/craftcms/redactor/issues/203))
+- Added the “Show unpermitted files” setting, which determines whether the field should show files that the user doesn’t have permission to view per the “View files uploaded by other users” permission.
+- Added `craft\redactor\events\ModifyPurifierConfigEvent`.
+- Added `craft\redactor\Field::EVENT_MODIFY_PURIFIER_CONFIG`, which makes it possible to modify the HTML Purifier config at runtime. ([#147](https://github.com/craftcms/redactor/issues/147))
+
+### Changed
+- The “Remove inline styles” setting now also applies to `<img>` tags.
+- Redactor fields no longer remove `style` attributes from `<img>` tags on load. ([#192](https://github.com/craftcms/redactor/issues/192))
+- Updated Redactor to 3.3.2.
+
+### Fixed
+- Fixed a bug where it could be impossible to scroll within a Redactor field after pasting in HTML. ([#117](https://github.com/craftcms/redactor/issues/117))
+- Fixed a bug where Redactor was aggressively removing newlines. ([#171](https://github.com/craftcms/redactor/issues/171))
+- Fixed a bug where it wasn’t possible to link to cross-site elements. ([#188](https://github.com/craftcms/redactor/issues/188))
+- Fixed a bug where the toolbar wasn’t sticking to the top of the window on scroll. ([#202](https://github.com/craftcms/redactor/issues/202), [#157](https://github.com/craftcms/redactor/issues/157))
+- Fixed the position of the context bar that appears when clicking on links or images. ([#201](https://github.com/craftcms/redactor/issues/201))
+- Fixed the position of the resize handle that appears when clicking on images with `imageResizable` enabled. ([#205](https://github.com/craftcms/redactor/issues/205), [#183](https://github.com/craftcms/redactor/issues/183))
+- Fixed a bug where it wasn’t possible to add multiple images at once. ([#200](https://github.com/craftcms/redactor/issues/200))
+
+## 2.5.0 - 2020-01-17
+
+### Added
+- Added the ability to create cross-site entry links. ([#187](https://github.com/craftcms/redactor/pull/187))
+
+### Changed
+- Updated the field styles for Craft 3.4.
+
 ## 2.4.0 - 2019-09-13
 
 ### Added

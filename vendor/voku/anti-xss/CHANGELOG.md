@@ -1,5 +1,46 @@
 # Changelog
 
+### 4.1.22 (2020-02-06)
+
+- fix false-positive (issue #54)
+- optimize internal caching of strings
+
+
+### 4.1.21 (2019-12-30)
+
+- fix false-positive (issue #53)
+- fix for "server-sent events"
+- optimize regex for encoded script-tags (%3C && %3E)
+
+
+### 4.1.20 (2019-12-07)
+
+- fix additional false positives in string (issue #52)
+- remove support for "Netscape 4 JS entities"
+
+
+### 4.1.19 (2019-11-11)
+
+- keep more non XSS content from html input
+
+
+### 4.1.18 (2019-11-11)
+
+- fix open tags problem e.g. "<img/"
+
+
+### 4.1.17 (2019-11-08)
+
+- add "addNeverAllowedRegex()"
+- add "removeNeverAllowedRegex()"
+
+
+### 4.1.16 (2019-11-03)
+
+- fix replacing of "-->" (issue #50)
+- update vendor lib (Portable UTF-8)
+
+
 ### 4.1.15 (2019-09-26)
 
 - optimize regex
@@ -35,7 +76,7 @@
 
 ### 4.1.9 (2019-04-19)
 
-- optimize the spacing regex 
+- optimize the spacing regex
 
 
 ### 4.1.8 (2019-04-19)
@@ -103,8 +144,8 @@
 
 ### 4.0.0 (2017-12-23)
 - update "Portable UTF8" from v4 -> v5
-  
-  -> this is a breaking change without API-changes - but the requirement 
+
+  -> this is a breaking change without API-changes - but the requirement
      from "Portable UTF8" has been changed (it no longer requires all polyfills from Symfony)
 
 
@@ -119,5 +160,5 @@
 
 
 ### 3.0.0 (2017-11-19)
-- "php": ">=7.0" 
+- "php": ">=7.0"
   * drop support for PHP < 7.0

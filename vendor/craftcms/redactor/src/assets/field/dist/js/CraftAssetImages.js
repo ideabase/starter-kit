@@ -4,6 +4,7 @@ var plugin = $.extend({}, Craft.Redactor.PluginBase, {
     icon: '<i class="re-icon-image"></i>',
     transforms: [],
     volumes: null,
+    allowAllUploaders: false,
 
     showModal: function () {
         if (this.app.selection.isCollapsed()) {
@@ -15,11 +16,20 @@ var plugin = $.extend({}, Craft.Redactor.PluginBase, {
         }
 
         if (typeof this.assetSelectionModal === 'undefined') {
+            var criteria = {
+                siteId: this.elementSiteId,
+                kind: 'image'
+            };
+
+            if (this.allowAllUploaders) {
+                criteria.uploaderId = null;
+            }
+
             this.assetSelectionModal = Craft.createElementSelectorModal('craft\\elements\\Asset', {
                 storageKey: 'RedactorInput.ChooseImage',
                 multiSelect: true,
                 sources: this.volumes,
-                criteria: {siteId: this.elementSiteId, kind: 'image'},
+                criteria: criteria,
                 onSelect: $.proxy(function(assets, transform) {
                     if (assets.length) {
                         if (this.app.selectionMarkers) {
@@ -29,6 +39,7 @@ var plugin = $.extend({}, Craft.Redactor.PluginBase, {
                         }
 
                         this.app.selectionMarkers = false;
+                        var data = {};
 
                         for (var i = 0; i < assets.length; i++) {
                             var asset = assets[i],
@@ -38,14 +49,13 @@ var plugin = $.extend({}, Craft.Redactor.PluginBase, {
                                 url += ':transform:' + transform;
                             }
 
-                            var data = {};
                             data['asset'+asset.id] = {
                                 url: url,
                                 id: asset.id
                             };
-
-                            this.app.api('module.image.insert', data);
                         }
+
+                        this.app.api('module.image.insert', data);
                     }
                 }, this),
                 closeOtherModals: false,

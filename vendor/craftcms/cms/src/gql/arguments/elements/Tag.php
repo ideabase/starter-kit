@@ -7,7 +7,10 @@
 
 namespace craft\gql\arguments\elements;
 
+use Craft;
+use craft\elements\Tag as TagElement;
 use craft\gql\base\ElementArguments;
+use craft\gql\types\QueryArgument;
 use GraphQL\Type\Definition\Type;
 
 /**
@@ -23,7 +26,7 @@ class Tag extends ElementArguments
      */
     public static function getArguments(): array
     {
-        return array_merge(parent::getArguments(), [
+        return array_merge(parent::getArguments(), self::getContentArguments(), [
             'group' => [
                 'name' => 'group',
                 'type' => Type::listOf(Type::string()),
@@ -31,9 +34,18 @@ class Tag extends ElementArguments
             ],
             'groupId' => [
                 'name' => 'groupId',
-                'type' => Type::listOf(Type::int()),
+                'type' => Type::listOf(QueryArgument::getType()),
                 'description' => 'Narrows the query results based on the tag groups the tags belong to, per the groups’ IDs.'
             ],
         ]);
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public static function getContentArguments(): array
+    {
+        $tagGroupFieldArguments = Craft::$app->getGql()->getContentArguments(Craft::$app->getTags()->getAllTagGroups(), TagElement::class);
+        return array_merge(parent::getContentArguments(), $tagGroupFieldArguments);
     }
 }

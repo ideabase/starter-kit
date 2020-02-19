@@ -1,0 +1,11 @@
+/**
+ * use '@import' to import all SCSS partials into this one
+ *
+ * grunt will turn this file into the main CSS stylesheet
+ */
+
+@import 'helpers/normalize';
+@import 'helpers/variables';
+@import 'helpers/mixins';
+
+@import 'partials/main';

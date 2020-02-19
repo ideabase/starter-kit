@@ -14,13 +14,10 @@ use Craft;
  *
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @since 3.0.0
- * @deprecated in 3.0
+ * @deprecated in 3.0.0
  */
 class Deprecator
 {
-    // Public Methods
-    // =========================================================================
-
     /**
      * Returns the total number of deprecation errors that have been logged.
      *

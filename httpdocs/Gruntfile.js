@@ -1,4 +1,4 @@
-module.exports = function (grunt) {
+module.exports = grunt => {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     sass: {
@@ -7,7 +7,7 @@ module.exports = function (grunt) {
           style: 'compressed'
         },
         files: {
-          'assets/css/style.css': 'assets/_sass/style.scss'
+          'assets/css/_global-intermediate.css': 'assets/_sass/global.scss'
         }
       }
     },
@@ -24,6 +24,19 @@ module.exports = function (grunt) {
         src: 'assets/css/*.css'
       }
     },
+    purgecss: {
+      my_target: {
+        options: {
+          content: [
+            '../templates/**/*.twig',
+            '../templates/**/*.html'
+          ]
+        },
+        files: {
+          'assets/css/global.css': ['assets/css/_global-intermediate.css']
+        }
+      }
+    },
     criticalcss: {
       custom: {
         options: {
@@ -31,7 +44,7 @@ module.exports = function (grunt) {
           width: 1200,
           height: 900,
           outputfile: "assets/css/critical.css",
-          filename: "assets/css/style.css",
+          filename: "assets/css/global.css",
           buffer: 800 * 1024,
           ignoreConsole: false
         }
@@ -40,14 +53,14 @@ module.exports = function (grunt) {
     uglify: {
       my_target: {
         files: {
-          'assets/js/min/scripts.js': ['assets/js/*.js'],
+          'assets/js/min/global.min.js': ['assets/js/*.js'],
         }
       }
     },
     watch: {
       css: {
         files: '**/*.scss',
-        tasks: ['sass', 'postcss'],
+        tasks: ['sass', 'postcss', 'purgecss'],
         options: {
           livereload: true
         }
@@ -60,16 +73,17 @@ module.exports = function (grunt) {
         }
       }
     }
-  });
+  })
 
   // Plugins
-  grunt.loadNpmTasks('grunt-contrib-sass');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-criticalcss');
-  grunt.loadNpmTasks('grunt-postcss');
+  grunt.loadNpmTasks('grunt-contrib-sass')
+  grunt.loadNpmTasks('grunt-contrib-uglify')
+  grunt.loadNpmTasks('grunt-contrib-watch')
+  grunt.loadNpmTasks('grunt-criticalcss')
+  grunt.loadNpmTasks('grunt-postcss')
+  grunt.loadNpmTasks('grunt-purgecss')
 
   // Tasks
-  grunt.registerTask('default', ['watch']);
-  grunt.registerTask('critical', ['criticalcss', 'postcss']);
-};
+  grunt.registerTask('default', ['watch'])
+  grunt.registerTask('critical', ['criticalcss', 'postcss'])
+}

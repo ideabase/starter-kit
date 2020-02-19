@@ -3,6 +3,36 @@
 
 var imageResizeClass = $R['classes']['image.resize'];
 
+imageResizeClass.prototype.init = function (app) {
+    this.app = app;
+    this.$doc = app.$doc;
+    this.$win = app.$win;
+    this.$body = app.$body;
+    this.editor = app.editor;
+    this.toolbar = app.toolbar;
+    this.inspector = app.inspector;
+
+    // init
+    this.$target = (this.toolbar.isTarget()) ? this.toolbar.getTargetElement() : this.$body;
+
+    // Change the target according to LP
+    var attachLivePreview = () => {
+        this.hide();
+        var $editor = $('.lp-editor');
+        if ($editor.length) {
+            this.$target = $R.dom($editor[0]);
+        }
+    };
+
+    var detachLivePreview = () => {
+        this.hide();
+        this.$target = (this.toolbar.isTarget()) ? this.toolbar.getTargetElement() : this.$body;
+    }
+
+    attachPreviewListeners(attachLivePreview, detachLivePreview);
+
+    this._init();
+}
 // Position the image resizer correctly
 imageResizeClass.prototype._setResizerPosition = function () {
     if (this.$resizer)
@@ -10,15 +40,15 @@ imageResizeClass.prototype._setResizerPosition = function () {
         var isTarget = this.toolbar.isTarget();
         var targetOffset = this.$target.offset();
         var offsetFix = 7;
-        var topOffset = offsetFix;
-        var leftOffset = offsetFix;
+        var topOffset = (isTarget) ? (offsetFix - targetOffset.top + this.$target.scrollTop()) : offsetFix;
+        var leftOffset = (isTarget) ? (offsetFix - targetOffset.left) : offsetFix;
         var pos = this.$resizableImage.offset();
         var width = this.$resizableImage.width();
         var height = this.$resizableImage.height();
         var resizerWidth =  this.$resizer.width();
         var resizerHeight =  this.$resizer.height();
 
-        this.$resizer.css({ top: (pos.top + height - resizerHeight + topOffset) + 'px', left: (pos.left + width - resizerWidth + leftOffset) + 'px' });
+        this.$resizer.css({ top: Math.round(pos.top + height - resizerHeight + topOffset) + 'px', left: Math.round(pos.left + width - resizerWidth + leftOffset) + 'px' });
     }
 };
 
@@ -42,12 +72,6 @@ imageResizeClass.prototype._build = function (e) {
 
         this._setResizerPosition();
         this.$resizer.on('mousedown touchstart', this._set.bind(this));
-
-        if (this.toolbar.isTarget()) {
-            this.$target.on('scroll.resizer', this.rebuild.bind(this));
-        } else {
-            $R.dom('#content-container').on('scroll.resizer', this.rebuild.bind(this));
-        }
     }
 };
 // Stop listening to scroll
@@ -65,11 +89,53 @@ imageResizeClass.prototype.hide = function () {
 
 var toolbarFixedClass = $R['classes']['toolbar.fixed'];
 
+toolbarFixedClass.prototype.livePreview = false;
+toolbarFixedClass.prototype.$previousFixedTarget = false;
+
+toolbarFixedClass.prototype._init = function() {
+    this.$fixedTarget = (this.toolbar.isTarget()) ? this.toolbar.getTargetElement() : this.$win;
+    this._doFixed();
+
+    if (this.toolbar.isTarget())
+    {
+        this.$win.on('scroll.redactor-toolbar-' + this.uuid, this._doFixed.bind(this));
+        this.$win.on('resize.redactor-toolbar-' + this.uuid, this._doFixed.bind(this));
+    }
+
+    this.$fixedTarget.on('scroll.redactor-toolbar-' + this.uuid, this._doFixed.bind(this));
+    this.$fixedTarget.on('resize.redactor-toolbar-' + this.uuid, this._doFixed.bind(this));
+
+    var attachLivePreview = () => {
+        var $editor = $('.lp-editor');
+        if ($editor.length) {
+            this.livePreview = true;
+            this.$previousFixedTarget = this.$fixedTarget;
+            $editor = $R.dom($editor[0]);
+            $editor.on('scroll.redactor-toolbar-' + this.uuid, this._doFixed.bind(this));
+            this.$fixedTarget = $editor;
+        }
+    };
+
+    var detachLivePreview = () => {
+        this.livePreview = false;
+        this.$fixedTarget = this.$previousFixedTarget;
+        this.$previousFixedTarget = null;
+    }
+
+    attachPreviewListeners(attachLivePreview, detachLivePreview);
+};
+
 toolbarFixedClass.prototype._doFixed = function() {
     var $editor = this.editor.getElement();
     var $container = this.container.getElement();
     var $toolbar = this.toolbar.getElement();
     var $wrapper = this.toolbar.getWrapper();
+
+    if (this.editor.isSourceMode())
+    {
+        return;
+    }
+
     var $targets = $container.parents().filter(function(node)
     {
         return (getComputedStyle(node, null).display === 'none') ? node : false;
@@ -81,21 +147,36 @@ toolbarFixedClass.prototype._doFixed = function() {
     var isHeight = ($editor.height() < 100);
     var isEmpty = this.editor.isEmpty();
 
-    if (isHeight || isEmpty || this.editor.isSourceMode()) return;
+    if (isHeight || isEmpty) {
+        this.reset();
+        return;
+    }
 
-    // Fix figuring out when to pin the toolbar and when not.
     var toolbarHeight = $toolbar.height();
-    var toleranceEnd = 100;
-    var containerOffset = $container.offset();
-    var boxOffset = containerOffset.top;
-    var scrollOffset = this.$fixedTarget.scrollTop();
-    var top = (!this.toolbar.isTarget()) ? 0 : this.$fixedTarget.offset().top - this.$win.scrollTop();
-    var relativeTopPoint = boxOffset - toleranceEnd;
 
-    if (relativeTopPoint < 0 && Math.abs(relativeTopPoint) < $container.height() - toleranceEnd)
+    var pinIt = false;
+    var pinDistance = 0;
+    var tolerance = 20;
+
+    if (this.livePreview) {
+        var headerBuffer = $('.lp-editor-container header.flex').length ? $('.lp-editor-container header.flex').height() : 0;
+        var distanceFromScreenTop = $editor.offset().top - headerBuffer;
+        var bottomFromScreenTop = distanceFromScreenTop + $editor.height() - toolbarHeight;
+    } else {
+        var headerBuffer = $('body.fixed-header #header').length ? $('body.fixed-header #header').height() : 0;
+        var distanceFromScreenTop = $editor.offset().top - this.$win.scrollTop() - headerBuffer;
+        var bottomFromScreenTop = distanceFromScreenTop + $editor.height() - toolbarHeight;
+    }
+
+    pinIt = distanceFromScreenTop  + tolerance < 0 && bottomFromScreenTop > 0;
+    pinDistance = $editor.scrollTop() + headerBuffer + tolerance;
+
+    // Figure out when to pin the toolbar
+
+    if (pinIt)
     {
         var position = (this.detector.isDesktop()) ? 'fixed' : 'absolute';
-        top = (this.detector.isDesktop()) ? top : (scrollOffset - boxOffset + this.opts.toolbarFixedTopOffset);
+        pinDistance = (this.detector.isDesktop()) ? pinDistance : (scrollOffset - boxOffset + this.opts.toolbarFixedTopOffset);
 
         if (this.detector.isMobile())
         {
@@ -115,12 +196,15 @@ toolbarFixedClass.prototype._doFixed = function() {
         $toolbar.addClass('redactor-toolbar-fixed');
         $toolbar.css({
             position: position,
-            top: (top + this.opts.toolbarFixedTopOffset) + 'px',
+            top: (pinDistance + this.opts.toolbarFixedTopOffset) + 'px',
             width: $container.width() + 'px'
         });
 
         var dropdown = this.toolbar.getDropdown();
-        if (dropdown) dropdown.updatePosition();
+
+        if (dropdown) {
+            dropdown.updatePosition();
+        }
 
         this.app.broadcast('toolbar.fixed');
     }
@@ -130,3 +214,164 @@ toolbarFixedClass.prototype._doFixed = function() {
         this.app.broadcast('toolbar.unfixed');
     }
 };
+
+var inputCleanerService = $R['services']['cleaner'];
+
+inputCleanerService.prototype.input = function(html, paragraphize, started)
+{
+    // pre/code
+    html = this.encodePreCode(html);
+
+    // converting entity
+    html = html.replace(/\$/g, '&#36;');
+    html = html.replace(/&amp;/g, '&');
+
+    // convert to figure
+    var converter = $R.create('cleaner.figure', this.app);
+    html = converter.convert(html, this.convertRules);
+
+    // store components
+    html = this.storeComponents(html);
+
+    // clean
+    html = this.replaceTags(html, this.opts.replaceTags);
+    html = this._setSpanAttr(html);
+    html = this._setStyleCache(html);
+    html = this.removeTags(html, this.deniedTags);
+    html = (this.opts.removeScript) ? this._removeScriptTag(html) : this._replaceScriptTag(html);
+    //html = (this.opts.removeScript) ? this._removeScriptTag(html) : html;
+    html = (this.opts.removeComments) ? this.removeComments(html) : html;
+    html = (this._isSpacedEmpty(html)) ? this.opts.emptyHtml : html;
+
+    // restore components
+    html = this.restoreComponents(html);
+
+    // clear wrapped components
+    html = this._cleanWrapped(html);
+
+    // remove image attributes
+    var $wrapper = this.utils.buildWrapper(html);
+    var imageattrs = ['alt', 'title', 'src', 'class', 'width', 'height', 'srcset', 'style'];
+    $wrapper.find('img').each(function(node) {
+        if (node.attributes.length > 0) {
+            var attrs = node.attributes;
+            for (var i = attrs.length - 1; i >= 0; i--) {
+                if (attrs[i].name.search(/^data\-/) === -1 && imageattrs.indexOf(attrs[i].name) === -1) {
+                    node.removeAttribute(attrs[i].name);
+                }
+            }
+        }
+    });
+
+    // get wrapper html
+    html = this.utils.getWrapperHtml($wrapper);
+
+    // paragraphize
+    html = (paragraphize) ? this.paragraphize(html) : html;
+
+    return html;
+}
+
+var toolbarDropdownClass = $R['classes']['toolbar.dropdown'];
+
+toolbarDropdownClass.prototype.updatePosition = function ()
+{
+    var isFixed = this.toolbar.isFixed();
+    var isTarget = this.toolbar.isTarget();
+
+    var btnHeight = this.$btn.height();
+    var btnWidth = this.$btn.width();
+
+    var pos = this.$btn.offset();
+    var position = 'absolute';
+    var topOffset = 2;
+
+    if (isFixed) {
+        pos.top = (isTarget) ? this.$btn.offset().top : this.$btn.position().top;
+        position = 'fixed';
+        topOffset = topOffset + this.opts.toolbarFixedTopOffset;
+    }
+
+
+    var leftOffset = 0;
+    var left = (pos.left + leftOffset);
+    var width = parseFloat(this.css('width'));
+    var winWidth = this.$win.width();
+    var leftFix = (winWidth < (left + width)) ? (width - btnWidth) : 0;
+    var leftPos = (left - leftFix);
+    var top = (pos.top + btnHeight + topOffset);
+
+    if (isFixed) {
+        var toolbarElement = this.toolbar.getElement();
+        top = toolbarElement.position().top + toolbarElement.height();
+    }
+
+    leftPos = (leftPos < 0) ? 4 : leftPos;
+
+    this.css({
+        maxHeight: '',
+        position: position,
+        top: top + 'px',
+        left: leftPos + 'px'
+    });
+
+    // height adaptive
+    var heightTolerance = 10;
+    var winHeight = this.$win.height();
+    var scrollTop = this.$doc.scrollTop();
+    var cropHeight = winHeight - (top - scrollTop) - heightTolerance;
+
+    this.css('max-height', cropHeight + 'px');
+    if (
+        (window.draftEditor && window.draftEditor.preview && window.draftEditor.isPreviewActive()) ||
+        (Craft.livePreview && Craft.livePreview.inPreviewMode)
+    ) {
+        this.addClass('lp-redactor-dropdown');
+    } else {
+        this.removeClass('lp-redactor-dropdown');
+    }
+};
+
+var contextBarClass = $R["modules"]["contextbar"];
+
+contextBarClass.prototype.init = function (app) {
+    this.app = app;
+    this.opts = app.opts;
+    this.uuid = app.uuid;
+    this.$win = app.$win;
+    this.$doc = app.$doc;
+    this.$body = app.$body;
+    this.editor = app.editor;
+    this.toolbar = app.toolbar;
+    this.detector = app.detector;
+    this.livePreview = false;
+
+    // local
+    this.$target = (this.toolbar.isTarget()) ? this.toolbar.getTargetElement() : this.$body;
+
+    // Change the target according to LP
+    var attachLivePreview = () => {
+        var $target = $('.lp-editor');
+        if ($target.length) {
+            $(this.$contextbar.get()).appendTo($target);
+            this.livePreview = true;
+        }
+    };
+
+    var detachLivePreview = () => {
+        $target = $((this.toolbar.isTarget()) ? this.toolbar.getTargetElement() : this.$body);
+        $(this.$contextbar.get()).appendTo($target.get(0));
+        this.livePreview = false;
+    }
+
+    attachPreviewListeners(attachLivePreview, detachLivePreview);
+};
+
+
+function attachPreviewListeners (openCallback, closeCallback) {
+    Garnish.on(Craft.Preview, 'open', openCallback);
+    Garnish.on(Craft.LivePreview, 'enter', openCallback);
+
+    Garnish.on(Craft.Preview, 'close', closeCallback);
+    Garnish.on(Craft.LivePreview, 'exit', closeCallback);
+}

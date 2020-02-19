@@ -23,9 +23,6 @@ use craft\services\Elements;
  */
 class PropagateElements extends BaseJob
 {
-    // Properties
-    // =========================================================================
-
     /**
      * @var string|ElementInterface The element type that should be propagated
      */
@@ -42,9 +39,6 @@ class PropagateElements extends BaseJob
      * If this is `null`, then elements will be propagated to all supported sites, except the one they were queried in.
      */
     public $siteId;
-
-    // Public Methods
-    // =========================================================================
 
     /**
      * @inheritdoc
@@ -73,9 +67,6 @@ class PropagateElements extends BaseJob
         $elementsService->off(Elements::EVENT_BEFORE_PROPAGATE_ELEMENT, $callback);
     }
 
-    // Protected Methods
-    // =========================================================================
-
     /**
      * @inheritdoc
      */
@@ -87,12 +78,9 @@ class PropagateElements extends BaseJob
         $elementType = $query->elementType;
         $total = $query->count();
         return Craft::t('app', 'Propagating {type}', [
-            'type' => mb_strtolower($total == 1 ? $elementType::displayName() : $elementType::pluralDisplayName()),
+            'type' => $total == 1 ? $elementType::lowerDisplayName() : $elementType::pluralLowerDisplayName(),
         ]);
     }
-
-    // Private Methods
-    // =========================================================================
 
     /**
      * Returns the element query based on the criteria.

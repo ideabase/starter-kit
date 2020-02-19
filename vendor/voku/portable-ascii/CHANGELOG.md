@@ -1,5 +1,55 @@
 # Changelog
 
+### 1.4.8 (2020-02-06)
+
+- small optimization for "ASCII::to_ascii()" performance
+
+### 1.4.7 (2020-01-27)
+
+- fix possible wrong type from "getDataIfExists()" -> e.g. a bug reported where "/data/" was modified
+- inline variables
+- do not use "=== true" for "bool"-types
+
+### 1.4.6 (2019-12-23)
+
+- optimize "ASCII::to_ascii()" performance
+- add "armenian" chars
+- add "ASCII:getAllLanguages()"
+
+### 1.4.5 (2019-12-19)
+
+- use "@psalm-pure" v2
+
+### 1.4.4 (2019-12-19)
+
+- use "@psalm-pure"
+
+### 1.4.3 (2019-12-19)
+
+- use "@psalm-immutable"
+
+### 1.4.2 (2019-12-13)
+
+- optimize the performance v2
+- more fixes for non-ascii regex
+
+### 1.4.1 (2019-12-13)
+
+- fix regex for non-ascii
+
+### 1.4.0 (2019-12-13)
+
+- optimize the performance, via single char replacements
+
+### 1.3.6 (2019-12-13)
+
+- "ascii_extras" -> convert the static content into ascii 
+   -> e.g.: instead of replacing "+" with "più" we use "piu" (Italian), because we want to use ascii anyway
+
+### 1.3.5 (2019-11-11)
+
+- fix "ASCII::remove_invisible_characters()" -> do not remove invisible encoded url strings by default
+
 ### 1.3.4 (2019-10-14)
 
 - fix static cache for "ASCII::charsArrayWithOneLanguage"
@@ -10,7 +60,7 @@
 
 ### 1.3.2 (2019-10-14)
 
-- fix language parameter usag with e.g. "de_DE"
+- fix language parameter usage with e.g. "de_DE"
 - re-add missing "extra"-mapping chars
 
 ### 1.3.1 (2019-10-13)

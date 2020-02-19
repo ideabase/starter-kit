@@ -30,9 +30,6 @@ use yii\db\Connection;
  */
 class GlobalSetQuery extends ElementQuery
 {
-    // Properties
-    // =========================================================================
-
     /**
      * @inheritdoc
      */
@@ -53,9 +50,6 @@ class GlobalSetQuery extends ElementQuery
      */
     public $handle;
 
-    // Public Methods
-    // =========================================================================
-
     /**
      * Sets the [[$editable]] property.
      *
@@ -74,7 +68,7 @@ class GlobalSetQuery extends ElementQuery
      *
      * Possible values include:
      *
-     * | Value | Fetches {elements}…
+     * | Value | Fetches global sets…
      * | - | -
      * | `'foo'` | with a handle of `foo`.
      * | `'not foo'` | not with a handle of `foo`.
@@ -84,14 +78,14 @@ class GlobalSetQuery extends ElementQuery
      * ---
      *
      * ```twig
-     * {# Fetch the {element} with a handle of 'foo' #}
+     * {# Fetch the global set with a handle of 'foo' #}
      * {% set {element-var} = {twig-method}
      *     .handle('foo')
      *     .one() %}
      * ```
      *
      * ```php
-     * // Fetch the {element} with a handle of 'foo'
+     * // Fetch the global set with a handle of 'foo'
      * ${element-var} = {php-method}
      *     ->handle('foo')
      *     ->one();
@@ -106,9 +100,6 @@ class GlobalSetQuery extends ElementQuery
         $this->handle = $value;
         return $this;
     }
-
-    // Protected Methods
-    // =========================================================================
 
     /**
      * @inheritdoc
@@ -132,9 +123,6 @@ class GlobalSetQuery extends ElementQuery
 
         return parent::beforePrepare();
     }
-
-    // Private Methods
-    // =========================================================================
 
 
     /**

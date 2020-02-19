@@ -26,9 +26,6 @@ use yii\base\InvalidConfigException;
  */
 class Tag extends Element
 {
-    // Static
-    // =========================================================================
-
     /**
      * @inheritdoc
      */
@@ -40,9 +37,25 @@ class Tag extends Element
     /**
      * @inheritdoc
      */
+    public static function lowerDisplayName(): string
+    {
+        return Craft::t('app', 'tag');
+    }
+
+    /**
+     * @inheritdoc
+     */
     public static function pluralDisplayName(): string
     {
         return Craft::t('app', 'Tags');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function pluralLowerDisplayName(): string
+    {
+        return Craft::t('app', 'tags');
     }
 
     /**
@@ -132,9 +145,6 @@ class Tag extends Element
         return ['taggroups.' . $context->uid];
     }
 
-    // Properties
-    // =========================================================================
-
     /**
      * @var int|null Group ID
      */
@@ -145,9 +155,6 @@ class Tag extends Element
      * @see beforeDelete()
      */
     public $deletedWithGroup = false;
-
-    // Public Methods
-    // =========================================================================
 
     /**
      * @inheritdoc
@@ -162,9 +169,9 @@ class Tag extends Element
     /**
      * @inheritdoc
      */
-    public function rules()
+    protected function defineRules(): array
     {
-        $rules = parent::rules();
+        $rules = parent::defineRules();
         $rules[] = [['groupId'], 'number', 'integerOnly' => true];
         return $rules;
     }

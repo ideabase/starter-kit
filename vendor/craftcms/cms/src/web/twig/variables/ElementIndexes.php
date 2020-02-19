@@ -14,13 +14,10 @@ use Craft;
  *
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @since 3.0.0
- * @deprecated in 3.0
+ * @deprecated in 3.0.0
  */
 class ElementIndexes
 {
-    // Public Methods
-    // =========================================================================
-
     /**
      * Returns the element index sources in the custom groupings/order.
      *

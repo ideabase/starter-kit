@@ -52,14 +52,12 @@
                             Craft.cp.displayError(Craft.t('app', 'Couldn’t save new route order.'));
                         }
                     }
-
                 }, this));
             },
 
             addRoute: function() {
                 new RouteSettingsModal();
             }
-
         });
 
 
@@ -126,7 +124,6 @@
                 this.$uri.html(uriHtml);
                 this.$template.text(this.modal.$templateInput.val());
             }
-
         });
 
 
@@ -189,7 +186,7 @@
 
                     for (i = 0; i < Craft.sites.length; i++) {
                         var siteInfo = Craft.sites[i];
-                        containerHtml += '<option value="' + siteInfo.uid + '">' + siteInfo.name + '</option>';
+                        containerHtml += '<option value="' + siteInfo.uid + '">' + Craft.escapeHtml(siteInfo.name) + '</option>';
                     }
 
                     containerHtml +=
@@ -453,13 +450,11 @@
                             Craft.cp.displayNotice(Craft.t('app', 'Route saved.'));
                         } else if (response.errors) {
                             if (response.errors.uri) {
-
                             }
                         } else {
                             Craft.cp.displayError(Craft.t('app', 'Couldn’t save route.'));
                         }
                     }
-
                 }, this));
             },
 
@@ -499,7 +494,6 @@
                     }
                 }
             }
-
         });
 
 

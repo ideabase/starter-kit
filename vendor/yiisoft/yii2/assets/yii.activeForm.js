@@ -705,10 +705,10 @@
             return false;
         }
 
-        var errorAttributes = [];
-        var $input = findInput($form, this);
+        var errorAttributes = [], $input;
         $.each(data.attributes, function () {
             var hasError = (submitting && updateInput($form, this, messages)) || (!submitting && attrHasError($form, this, messages));
+            $input = findInput($form, this);
 
             if (!$input.is(":disabled") && !this.cancelled && hasError) {
                 errorAttributes.push(this);
@@ -876,6 +876,14 @@
         var type = $input.attr('type');
         if (type === 'checkbox' || type === 'radio') {
             var $realInput = $input.filter(':checked');
+            if ($realInput.length > 1) {
+                var values = [];
+                $realInput.each(function(index) {
+                    values.push($($realInput.get(index)).val());
+                });
+                return values;
+            }
+
             if (!$realInput.length) {
                 $realInput = $form.find('input[type=hidden][name="' + $input.attr('name') + '"]');
             }

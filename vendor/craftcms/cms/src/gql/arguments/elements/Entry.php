@@ -7,7 +7,11 @@
 
 namespace craft\gql\arguments\elements;
 
+use Craft;
+use craft\elements\Entry as EntryElement;
 use craft\gql\base\StructureElementArguments;
+use craft\gql\types\QueryArgument;
+use craft\helpers\Gql as GqlHelper;
 use GraphQL\Type\Definition\Type;
 
 /**
@@ -23,7 +27,7 @@ class Entry extends StructureElementArguments
      */
     public static function getArguments(): array
     {
-        return array_merge(parent::getArguments(), [
+        return array_merge(parent::getArguments(), self::getContentArguments(), [
             'editable' => [
                 'name' => 'editable',
                 'type' => Type::boolean(),
@@ -36,7 +40,7 @@ class Entry extends StructureElementArguments
             ],
             'sectionId' => [
                 'name' => 'sectionId',
-                'type' => Type::listOf(Type::int()),
+                'type' => Type::listOf(QueryArgument::getType()),
                 'description' => 'Narrows the query results based on the sections the entries belong to, per the sections’ IDs.'
             ],
             'type' => [
@@ -46,12 +50,12 @@ class Entry extends StructureElementArguments
             ],
             'typeId' => [
                 'name' => 'typeId',
-                'type' => Type::listOf(Type::int()),
+                'type' => Type::listOf(QueryArgument::getType()),
                 'description' => 'Narrows the query results based on the entries’ entry types, per the types’ IDs.'
             ],
             'authorId' => [
                 'name' => 'authorId',
-                'type' => Type::listOf(Type::int()),
+                'type' => Type::listOf(QueryArgument::getType()),
                 'description' => 'Narrows the query results based on the entries’ authors.'
             ],
             'authorGroup' => [
@@ -59,9 +63,14 @@ class Entry extends StructureElementArguments
                 'type' => Type::listOf(Type::string()),
                 'description' => 'Narrows the query results based on the user group the entries’ authors belong to.'
             ],
+            'authorGroupId' => [
+                'name' => 'authorGroupId',
+                'type' => Type::listOf(QueryArgument::getType()),
+                'description' => 'Narrows the query results based on the user group the entries’ authors belong to, per the groups’ IDs.'
+            ],
             'postDate' => [
                 'name' => 'postDate',
-                'type' => Type::string(),
+                'type' => Type::listOf(Type::string()),
                 'description' => 'Narrows the query results based on the entries’ post dates.'
             ],
             'before' => [
@@ -76,9 +85,19 @@ class Entry extends StructureElementArguments
             ],
             'expiryDate' => [
                 'name' => 'expiryDate',
-                'type' => Type::string(),
+                'type' => Type::listOf(Type::string()),
                 'description' => 'Narrows the query results based on the entries’ expiry dates.'
             ],
         ]);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function getContentArguments(): array
+    {
+        $entryTypeFieldArguments = Craft::$app->getGql()->getContentArguments(Craft::$app->getSections()->getAllEntryTypes(), EntryElement::class);
+
+        return array_merge(parent::getContentArguments(), $entryTypeFieldArguments);
     }
 }

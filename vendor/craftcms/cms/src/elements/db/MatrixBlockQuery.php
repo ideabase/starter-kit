@@ -11,6 +11,7 @@ use Craft;
 use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\db\Query;
+use craft\db\QueryAbortedException;
 use craft\db\Table;
 use craft\elements\MatrixBlock;
 use craft\fields\Matrix as MatrixField;
@@ -37,9 +38,6 @@ use yii\db\Connection;
  */
 class MatrixBlockQuery extends ElementQuery
 {
-    // Properties
-    // =========================================================================
-
     /**
      * @inheritdoc
      */
@@ -63,7 +61,7 @@ class MatrixBlockQuery extends ElementQuery
 
     /**
      * @var mixed
-     * @deprecated in 3.2
+     * @deprecated in 3.2.0
      */
     public $ownerSiteId;
 
@@ -101,9 +99,6 @@ class MatrixBlockQuery extends ElementQuery
      */
     public $typeId;
 
-    // Public Methods
-    // =========================================================================
-
     /**
      * @inheritdoc
      */
@@ -125,11 +120,73 @@ class MatrixBlockQuery extends ElementQuery
     }
 
     /**
-     * Narrows the query results based on the field the Matrix blocks belong to, per the fields’ IDs.
+     * Narrows the query results based on the field the Matrix blocks belong to.
      *
      * Possible values include:
      *
      * | Value | Fetches {elements}…
+     * | - | -
+     * | `'foo'` | in a field with a handle of `foo`.
+     * | `'not foo'` | not in a field with a handle of `foo`.
+     * | `['foo', 'bar']` | in a field with a handle of `foo` or `bar`.
+     * | `['not', 'foo', 'bar']` | not in a field with a handle of `foo` or `bar`.
+     * | a [[MatrixField]] object | in a field represented by the object.
+     *
+     * ---
+     *
+     * ```twig
+     * {# Fetch {elements} in the Foo field #}
+     * {% set {elements-var} = {twig-method}
+     *     .field('foo')
+     *     .all() %}
+     * ```
+     *
+     * ```php
+     * // Fetch {elements} in the Foo field
+     * ${elements-var} = {php-method}
+     *     ->field('foo')
+     *     ->all();
+     * ```
+     *
+     * @param string|string[]|MatrixField|null $value The property value
+     * @return static self reference
+     * @uses $fieldId
+     * @since 3.4.0
+     */
+    public function field($value)
+    {
+        if ($value instanceof MatrixField) {
+            $this->fieldId = $value->id;
+        } else if (is_string($value) || (is_array($value) && count($value) === 1)) {
+            if (!is_string($value)) {
+                $value = reset($value);
+            }
+            $field = Craft::$app->getFields()->getFieldByHandle($value);
+            if ($field && $field instanceof MatrixField) {
+                $this->fieldId = $field->id;
+            } else {
+                $this->fieldId = false;
+            }
+        } else if ($value !== null) {
+            $this->fieldId = (new Query())
+                ->select(['id'])
+                ->from([Table::FIELDS])
+                ->where(Db::parseParam('handle', $value))
+                ->andWhere(['type' => MatrixField::class])
+                ->column();
+        } else {
+            $this->fieldId = null;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Narrows the query results based on the field the Matrix blocks belong to, per the fields’ IDs.
+     *
+     * Possible values include:
+     *
+     * | Value | Fetches Matrix blocks…
      * | - | -
      * | `1` | in a field with an ID of 1.
      * | `'not 1'` | not in a field with an ID of 1.
@@ -139,14 +196,14 @@ class MatrixBlockQuery extends ElementQuery
      * ---
      *
      * ```twig
-     * {# Fetch {elements} in the field with an ID of 1 #}
+     * {# Fetch Matrix blocks in the field with an ID of 1 #}
      * {% set {elements-var} = {twig-method}
      *     .fieldId(1)
      *     .all() %}
      * ```
      *
      * ```php
-     * // Fetch {elements} in the field with an ID of 1
+     * // Fetch Matrix blocks in the field with an ID of 1
      * ${elements-var} = {php-method}
      *     ->fieldId(1)
      *     ->all();
@@ -167,7 +224,7 @@ class MatrixBlockQuery extends ElementQuery
      *
      * Possible values include:
      *
-     * | Value | Fetches {elements}…
+     * | Value | Fetches Matrix blocks…
      * | - | -
      * | `1` | created for an element with an ID of 1.
      * | `'not 1'` | not created for an element with an ID of 1.
@@ -177,14 +234,14 @@ class MatrixBlockQuery extends ElementQuery
      * ---
      *
      * ```twig
-     * {# Fetch {elements} created for an element with an ID of 1 #}
+     * {# Fetch Matrix blocks created for an element with an ID of 1 #}
      * {% set {elements-var} = {twig-method}
      *     .ownerId(1)
      *     .all() %}
      * ```
      *
      * ```php
-     * // Fetch {elements} created for an element with an ID of 1
+     * // Fetch Matrix blocks created for an element with an ID of 1
      * ${elements-var} = {php-method}
      *     ->ownerId(1)
      *     ->all();
@@ -202,7 +259,7 @@ class MatrixBlockQuery extends ElementQuery
 
     /**
      * @return static self reference
-     * @deprecated in 3.2.
+     * @deprecated in 3.2.0
      */
     public function ownerSiteId()
     {
@@ -212,7 +269,7 @@ class MatrixBlockQuery extends ElementQuery
 
     /**
      * @return static self reference
-     * @deprecated in 3.2.
+     * @deprecated in 3.2.0
      */
     public function ownerSite()
     {
@@ -222,7 +279,7 @@ class MatrixBlockQuery extends ElementQuery
 
     /**
      * @return static self reference
-     * @deprecated in 3.0.
+     * @deprecated in 3.0.0
      */
     public function ownerLocale()
     {
@@ -236,14 +293,14 @@ class MatrixBlockQuery extends ElementQuery
      * ---
      *
      * ```twig
-     * {# Fetch {elements} created for this entry #}
+     * {# Fetch Matrix blocks created for this entry #}
      * {% set {elements-var} = {twig-method}
      *     .owner(myEntry)
      *     .all() %}
      * ```
      *
      * ```php
-     * // Fetch {elements} created for this entry
+     * // Fetch Matrix blocks created for this entry
      * ${elements-var} = {php-method}
      *     ->owner($myEntry)
      *     ->all();
@@ -266,7 +323,7 @@ class MatrixBlockQuery extends ElementQuery
      *
      * Possible values include:
      *
-     * | Value | Fetches {elements}…
+     * | Value | Fetches Matrix blocks…
      * | - | -
      * | `true` | which can belong to a draft.
      * | `false` | which cannot belong to a draft.
@@ -287,7 +344,7 @@ class MatrixBlockQuery extends ElementQuery
      *
      * Possible values include:
      *
-     * | Value | Fetches {elements}…
+     * | Value | Fetches Matrix blocks…
      * | - | -
      * | `true` | which can belong to a revision.
      * | `false` | which cannot belong to a revision.
@@ -308,7 +365,7 @@ class MatrixBlockQuery extends ElementQuery
      *
      * Possible values include:
      *
-     * | Value | Fetches {elements}…
+     * | Value | Fetches Matrix blocks…
      * | - | -
      * | `'foo'` | of a type with a handle of `foo`.
      * | `'not foo'` | not of a type with a handle of `foo`.
@@ -319,14 +376,14 @@ class MatrixBlockQuery extends ElementQuery
      * ---
      *
      * ```twig
-     * {# Fetch {elements} with a Foo block type #}
+     * {# Fetch Matrix blocks with a Foo block type #}
      * {% set {elements-var} = myEntry.myMatrixField
      *     .type('foo')
      *     .all() %}
      * ```
      *
      * ```php
-     * // Fetch {elements} with a Foo block type
+     * // Fetch Matrix blocks with a Foo block type
      * ${elements-var} = $myEntry->myMatrixField
      *     ->type('foo')
      *     ->all();
@@ -358,7 +415,7 @@ class MatrixBlockQuery extends ElementQuery
      *
      * Possible values include:
      *
-     * | Value | Fetches {elements}…
+     * | Value | Fetches Matrix blocks…
      * | - | -
      * | `1` | of a type with an ID of 1.
      * | `'not 1'` | not of a type with an ID of 1.
@@ -368,14 +425,14 @@ class MatrixBlockQuery extends ElementQuery
      * ---
      *
      * ```twig
-     * {# Fetch {elements} of the block type with an ID of 1 #}
+     * {# Fetch Matrix blocks of the block type with an ID of 1 #}
      * {% set {elements-var} = myEntry.myMatrixField
      *     .typeId(1)
      *     .all() %}
      * ```
      *
      * ```php
-     * // Fetch {elements} of the block type with an ID of 1
+     * // Fetch Matrix blocks of the block type with an ID of 1
      * ${elements-var} = $myEntry->myMatrixField
      *     ->typeId(1)
      *     ->all();
@@ -391,14 +448,15 @@ class MatrixBlockQuery extends ElementQuery
         return $this;
     }
 
-    // Protected Methods
-    // =========================================================================
-
     /**
      * @inheritdoc
      */
     protected function beforePrepare(): bool
     {
+        if ($this->fieldId !== null && empty($this->fieldId)) {
+            throw new QueryAbortedException();
+        }
+
         $this->joinElementTable('matrixblocks');
 
         // Figure out which content table to use

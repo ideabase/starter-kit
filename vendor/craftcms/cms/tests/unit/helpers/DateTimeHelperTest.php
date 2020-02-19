@@ -27,9 +27,6 @@ use yii\base\ErrorException;
  */
 class DateTimeHelperTest extends Unit
 {
-    // Public Properties
-    // =========================================================================
-
     /**
      * @var UnitTester
      */
@@ -49,12 +46,6 @@ class DateTimeHelperTest extends Unit
      * @var DateTimeZone
      */
     protected $asiaTokyoTimezone;
-
-    // Public Methods
-    // =========================================================================
-
-    // Tests
-    // =========================================================================
 
     /**
      * @dataProvider constantsDataProvider
@@ -444,10 +435,6 @@ class DateTimeHelperTest extends Unit
      */
     public function testIsValidIntervalString($result, $input)
     {
-        if (getenv('TRAVIS') && $result === false && PHP_VERSION_ID >= 70200) {
-            $this->expectException('ErrorException');
-        }
-
         $isValid = DateTimeHelper::isValidIntervalString($input);
         $this->assertSame($result, $isValid);
     }
@@ -473,9 +460,6 @@ class DateTimeHelperTest extends Unit
             DateTimeHelper::timeZoneOffset('invalid');
         });
     }
-
-    // Data Providers
-    // =========================================================================
 
     /**
      * @return array
@@ -568,7 +552,7 @@ class DateTimeHelperTest extends Unit
         return [
             ['+00:00', 'UTC'],
             ['+00:00', 'GMT'],
-            ['-04:00', 'America/New_York'],
+            ['-05:00', 'America/New_York'],
             ['+09:00', 'Asia/Tokyo'],
             ['+09:00', '+09:00'],
         ];
@@ -831,9 +815,6 @@ class DateTimeHelperTest extends Unit
             [false, false],
         ];
     }
-
-    // Protected Methods
-    // =========================================================================
 
     /**
      * @inheritdoc

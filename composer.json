@@ -1,8 +1,8 @@
 {
   "require": {
-    "craftcms/cms": "3.3.13",
+    "craftcms/cms": "3.4.6.1",
     "vlucas/phpdotenv": "^2.4.0",
-    "craftcms/redactor": "2.4.0"
+    "craftcms/redactor": "2.6.0.1"
   },
   "autoload": {
     "psr-4": {
